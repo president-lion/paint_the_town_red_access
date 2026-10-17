@@ -23,6 +23,7 @@ public class TextCleanTests
     [InlineData("Panel-MainMenu", "main menu")]
     [InlineData("ButtonToggle-SUPERHOT", "superhot")]
     [InlineData("ButtonMain-Scenarios (1)", "scenarios")]
+    [InlineData("Panel-Options(Clone)", "options")]
     [InlineData("Dropdown", "dropdown")]
     [InlineData("HUDOpacity", "hud opacity")]
     public void FromObjectName(string input, string expected) => Assert.Equal(expected, TextClean.FromObjectName(input));
@@ -45,8 +46,8 @@ public class MenuFormatTests
     public void Selector()
     {
         var it = new MenuItem { Label = "mode", Role = Strings.RoleSelector, Value = "standard", OptionIndex = 0, OptionCount = 3, Position = 2, Count = 4 };
-        Assert.Equal("mode, selector, standard, 1 of 3, 2 of 4", MenuFormat.Item(it));
-        Assert.Equal("standard, 1 of 3", MenuFormat.ValueChange(it));
+        Assert.Equal("mode, selector, standard, 2 of 4", MenuFormat.Item(it));
+        Assert.Equal("standard", MenuFormat.ValueChange(it));
     }
 
     [Fact]

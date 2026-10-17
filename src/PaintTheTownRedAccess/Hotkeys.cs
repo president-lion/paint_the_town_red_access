@@ -8,12 +8,23 @@ namespace PaintTheTownRedAccess;
 ///   F3   repeat the last line
 ///   Ctrl stop speech
 ///   F10  write screen.txt (what is on screen now)
+///   F11  write rewired.txt (every input action and its bindings)
+///   PageUp / PageDown  previous / next tab (options menus)
 /// </summary>
 internal static class Hotkeys
 {
     public static void Tick()
     {
         if (Input.GetKeyDown(KeyCode.F3)) Speech.Repeat();
+
+        if (Input.GetKeyDown(KeyCode.PageUp)) MenuReader.SwitchTab(-1);
+        if (Input.GetKeyDown(KeyCode.PageDown)) MenuReader.SwitchTab(1);
+
+        if (Input.GetKeyDown(KeyCode.F11))
+        {
+            RewiredDump.Write();
+            Speech.Say(Strings.InputDumpWritten);
+        }
 
         if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl)) Speech.Stop();
 

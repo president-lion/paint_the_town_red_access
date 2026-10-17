@@ -48,13 +48,18 @@ internal static class MenuReader
     {
         TickTabs();
 
+        // A null selection is a gap during a panel change; keep _lastId so the same item is
+        // not announced again when the selection comes back to it.
         var sel = EventSystem.current?.currentSelectedGameObject;
-        if (sel == null) { _lastId = 0; return; }
+        if (sel == null) return;
 
         var now = Time.unscaledTime;
         var id = sel.GetInstanceID();
         if (id != _lastId)
         {
+            // Panels that are still faded out (the console user picker at startup) are skipped
+            // until they show; the item is announced once it does.
+            if (!UiText.Visible(sel.transform)) return;
             _lastId = id;
             var item = Describe(sel);
             _lastValue = ValueKey(item);
@@ -82,15 +87,36 @@ internal static class MenuReader
 
     // ---- tabs ---------------------------------------------------------------------------
 
+    /// <summary>
+    /// Switches the tab of the visible tab strip. The game only does this on Rewired actions
+    /// 32/33 (gamepad bumpers; TabMenu.LateUpdate -> InputSystem.GetButtonDown), which the
+    /// keyboard may not have, so PageUp/PageDown call the same TabMenu methods.
+    /// </summary>
+    public static void SwitchTab(int direction)
+    {
+        ScanTabs(force: true);
+        foreach (var tab in _tabs)
+        {
+            if (tab == null || !UiText.Visible(tab.transform)) continue;
+            if (direction < 0) tab.MoveLeftOneTab(); else tab.MoveRightOneTab();
+            return;
+        }
+        Speech.Say(Strings.NoTabs);
+    }
+
+    private static void ScanTabs(bool force)
+    {
+        var now = Time.unscaledTime;
+        if (!force && now < _nextTabScan) return;
+        _nextTabScan = now + 2f;
+        _tabs.Clear();
+        foreach (var t in UnityEngine.Object.FindObjectsOfType<TabMenu>()) if (t != null) _tabs.Add(t);
+    }
+
     private static void TickTabs()
     {
         var now = Time.unscaledTime;
-        if (now >= _nextTabScan)
-        {
-            _nextTabScan = now + 2f;
-            _tabs.Clear();
-            foreach (var t in UnityEngine.Object.FindObjectsOfType<TabMenu>()) if (t != null) _tabs.Add(t);
-        }
+        ScanTabs(force: false);
 
         foreach (var tab in _tabs)
         {
@@ -281,6 +307,9 @@ internal static class MenuReader
         var wl = sel.GetComponentInParent<WinLoseUI>();
         if (wl != null && UiText.Showing(wl.pausedText)) return TextClean.Clean(wl.pausedText.text);
         if (wl != null) return ""; // win/lose/arena banners are spoken by ScreenWatch when they appear
+        // The pause menu's own panel is also called Panel-MainMenu.
+        if (sel.GetComponentInParent<PauseMenu>() != null && sel.GetComponentInParent<SettingsUI>() == null)
+            return Strings.Paused;
 
         string panel = null;
         for (var a = sel.parent; a != null; a = a.parent)
@@ -288,7 +317,8 @@ internal static class MenuReader
             for (var i = 0; i < a.childCount; i++)
             {
                 var c = a.GetChild(i);
-                if (c.name.IndexOf("Header", StringComparison.OrdinalIgnoreCase) < 0) continue;
+                // Header, HeaderArea - but not ServerListTableHeader (column titles).
+                if (!c.name.StartsWith("Header", StringComparison.OrdinalIgnoreCase)) continue;
                 if (sel.IsChildOf(c) || !UiText.Visible(c)) continue;
                 var text = UiText.First(c);
                 if (!string.IsNullOrWhiteSpace(text)) return TextClean.Clean(text);

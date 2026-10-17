@@ -42,7 +42,7 @@ internal static class TextClean
         if (string.IsNullOrEmpty(name)) return "";
         var dash = name.LastIndexOf('-');
         if (dash >= 0 && dash < name.Length - 1) name = name[(dash + 1)..];
-        name = Regex.Replace(name, @"\s*\(\d+\)$", "");
+        name = Regex.Replace(name, @"\s*\((\d+|Clone)\)$", "");
         var sb = new StringBuilder();
         for (var i = 0; i < name.Length; i++)
         {

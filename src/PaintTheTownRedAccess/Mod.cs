@@ -36,6 +36,9 @@ public sealed class Mod : MelonMod
         try { Hotkeys.Tick(); }
         catch (Exception ex) { Log.Once("Hotkeys", ex); }
 
+        try { RewiredDump.Tick(); }
+        catch (Exception ex) { Log.Once("RewiredDump", ex); }
+
         try { MenuReader.Tick(); }
         catch (Exception ex) { Log.Once("MenuReader", ex); }
 

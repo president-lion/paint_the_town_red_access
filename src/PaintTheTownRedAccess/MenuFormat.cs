@@ -15,8 +15,9 @@ internal sealed class MenuItem
 
 /// <summary>
 /// Builds the spoken line for a menu item. Pure logic - no Unity types - so it is unit tested.
-/// Order: label, role, value, option position, item position. Example:
-/// "mode, selector, standard, 1 of 3, 2 of 4".
+/// Order: label, role, value, item position. Example: "mode, selector, standard, 2 of 4".
+/// A selector's option index is not spoken (the user asked for positions on items only);
+/// it is still tracked so a change of option is noticed.
 /// </summary>
 internal static class MenuFormat
 {
@@ -26,20 +27,13 @@ internal static class MenuFormat
         if (!string.IsNullOrWhiteSpace(it.Label)) parts.Add(it.Label);
         if (!string.IsNullOrWhiteSpace(it.Role)) parts.Add(it.Role);
         if (!string.IsNullOrWhiteSpace(it.Value) && it.Value != it.Label) parts.Add(it.Value);
-        if (it.OptionIndex >= 0 && it.OptionCount > 1)
-            parts.Add(string.Format(Strings.Position, it.OptionIndex + 1, it.OptionCount));
         if (it.Position > 0 && it.Count > 1)
             parts.Add(string.Format(Strings.Position, it.Position, it.Count));
         return string.Join(", ", parts);
     }
 
     /// <summary>The line spoken when a selector's or slider's value changes in place.</summary>
-    public static string ValueChange(MenuItem it)
-    {
-        if (it.OptionIndex >= 0 && it.OptionCount > 1)
-            return $"{it.Value}, {string.Format(Strings.Position, it.OptionIndex + 1, it.OptionCount)}";
-        return it.Value;
-    }
+    public static string ValueChange(MenuItem it) => it.Value;
 
     /// <summary>Joins the screen title (only when it changed) with the item line.</summary>
     public static string WithContext(string context, string item) =>
