@@ -45,7 +45,7 @@ internal static class ScreenWatch
         if (_winLose != null)
         {
             Watch("win", _winLose.winText);
-            Watch("lose", _winLose.loseText);
+            if (Watch("lose", _winLose.loseText)) DangerProbe.LogDeath();
             Watch("arena", _winLose.arenaText);
         }
 
@@ -75,14 +75,16 @@ internal static class ScreenWatch
         Watch("saveState", BeneathSaveManagementPopup.IsShowing && save != null ? save.saveStateText : null);
     }
 
-    private static void Watch(string key, TMP_Text t, string format = null)
+    /// <summary>Speaks the text when it appears or changes; true when it did.</summary>
+    private static bool Watch(string key, TMP_Text t, string format = null)
     {
         var text = UiText.Showing(t) ? TextClean.Clean(t.text) : "";
         _last.TryGetValue(key, out var was);
-        if (text == (was ?? "")) return;
+        if (text == (was ?? "")) return false;
         _last[key] = text;
-        if (text.Length == 0) return;
+        if (text.Length == 0) return false;
         Speech.Say(format == null ? text : string.Format(format, text), interrupt: false);
         Log.Debug("Screen", $"{key}: {text}");
+        return true;
     }
 }
