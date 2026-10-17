@@ -60,6 +60,8 @@ internal static class Strings
     public const string Neutral = "neutral";
     public const string Friendly = "friendly";
     public const string Down = "down";
+    public const string PickedUp = "picked up {0}";
+    public const string NothingInReach = "nothing in reach";
     public const string Exit = "exit";
     public const string ExitDoor = "exit door";
     public const string Door = "door";

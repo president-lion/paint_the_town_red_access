@@ -21,6 +21,8 @@ internal static class Settings
     public static bool ArrowTurning => _arrowTurning?.Value ?? true;
     public static float TurnSpeed => Math.Clamp(_turnSpeed?.Value ?? 1f, 0.1f, 5f);
     public static float CueVolume => Math.Clamp(_cueVolume?.Value ?? 0.8f, 0f, 1f);
+    public static bool PickupAssist => _pickupAssist?.Value ?? true;
+    private static MelonPreferences_Entry<bool> _pickupAssist;
 
     public static bool Radar
     {
@@ -42,6 +44,8 @@ internal static class Settings
         _turnSpeed = cat.CreateEntry("TurnSpeed", 1f, "Turn speed",
             "Multiplies the game's gamepad turn speed for the arrow keys");
         _cueVolume = cat.CreateEntry("CueVolume", 0.8f, "Mod sound volume", "0 to 1");
+        _pickupAssist = cat.CreateEntry("PickupAssist", true, "Pick up without aiming",
+            "If E picks nothing up, take the nearest weapon within reach");
         _debugLog = cat.CreateEntry("DebugLog", true, "Verbose logging");
         _runInBackground = cat.CreateEntry("RunInBackground", false, "Keep running without focus",
             "Development aid: the game normally pauses when its window loses focus");
