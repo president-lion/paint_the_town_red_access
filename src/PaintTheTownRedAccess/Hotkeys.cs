@@ -14,6 +14,8 @@ namespace PaintTheTownRedAccess;
 ///   End                       beacon on/off
 ///   Shift+End                 enemy sounds on/off
 ///   M                         buttons menu (ButtonMenu)
+///   Z                         face the nearest enemy (FaceEnemy)
+///   G / T / X                 attack / block / drop (KeyRemap patches the game's input)
 ///   F10  write screen.txt (what is on screen now)
 ///   F11  write rewired.txt (every input action and its bindings)
 /// Left/Right arrows turn in a level: see Turning.
@@ -35,6 +37,7 @@ internal static class Hotkeys
         if (inPlay)
         {
             if (Input.GetKeyDown(KeyCode.H)) Game.SayHealth();
+            if (Input.GetKeyDown(KeyCode.Z)) FaceEnemy.Turn();
             if (Input.GetKeyDown(KeyCode.Home)) Scanner.SaySelected();
             if (Input.GetKeyDown(KeyCode.End))
             {

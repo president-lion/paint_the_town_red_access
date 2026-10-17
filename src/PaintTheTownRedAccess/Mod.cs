@@ -54,6 +54,12 @@ public sealed class Mod : MelonMod
         try { Turning.Tick(); }
         catch (Exception ex) { Log.Once("Turning", ex); }
 
+        try { KeyRemap.Tick(); }
+        catch (Exception ex) { Log.Once("KeyRemap", ex); }
+
+        try { DangerProbe.Tick(); }
+        catch (Exception ex) { Log.Once("DangerProbe", ex); }
+
         try { HitCheck.Tick(); }
         catch (Exception ex) { Log.Once("HitCheck", ex); }
 

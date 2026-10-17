@@ -56,6 +56,8 @@ internal static class Strings
     public const string ButtonTab = "{0}, {1} buttons.";
     public const string TabEnemies = "enemies";
     public const string TabWeapons = "weapons";
+    public const string TabBattle = "battle simulator";
+    public const string NoEnemies = "no enemies";
     public const string TabPlayer = "player";
     public const string TabOther = "other";
     public const string CategoryCount = "{0}, {1}";

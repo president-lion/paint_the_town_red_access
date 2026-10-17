@@ -24,6 +24,9 @@ internal static class Settings
     public static bool PickupAssist => _pickupAssist?.Value ?? true;
     public static float Reach => Math.Clamp(_reach?.Value ?? 1.8f, 0.5f, 6f);
     public static bool HitBeep => _hitBeep?.Value ?? true;
+    public static bool DangerWarning => _danger?.Value ?? true;
+    public static bool KeyRemap => _keyRemap?.Value ?? true;
+    private static MelonPreferences_Entry<bool> _danger, _keyRemap;
     private static MelonPreferences_Entry<bool> _hitBeep;
     private static MelonPreferences_Entry<float> _reach;
     private static MelonPreferences_Entry<bool> _pickupAssist;
@@ -48,6 +51,10 @@ internal static class Settings
         _turnSpeed = cat.CreateEntry("TurnSpeed", 1f, "Turn speed",
             "Multiplies the game's gamepad turn speed for the arrow keys");
         _cueVolume = cat.CreateEntry("CueVolume", 0.8f, "Mod sound volume", "0 to 1");
+        _danger = cat.CreateEntry("DangerWarning", true, "Water and drop warning",
+            "A crackle from the direction of deadly water or a big drop near you");
+        _keyRemap = cat.CreateEntry("KeyRemap", true, "Keyboard attack and block",
+            "G attacks, T blocks, X drops (instead of G)");
         _hitBeep = cat.CreateEntry("HitBeep", true, "Swing-would-hit beep",
             "A quiet beep every 100 ms while a swing straight ahead would hit someone");
         _reach = cat.CreateEntry("Reach", 1.8f, "Swing distance",
