@@ -22,6 +22,16 @@ internal static class UiDump
         sb.AppendLine($"Scene: {UnityEngine.SceneManagement.SceneManager.GetActiveScene().name}");
         var sel = EventSystem.current?.currentSelectedGameObject;
         sb.AppendLine($"EventSystem selected: {(sel != null ? PathOf(sel.transform) : "<none>")}");
+        if (sel != null)
+        {
+            try
+            {
+                var comps = sel.GetComponents<Component>().Select(c => c.GetIl2CppType().Name);
+                sb.AppendLine($"  components: {string.Join(", ", comps)}");
+                sb.AppendLine($"  reader says: {MenuFormat.WithContext(MenuReader.ContextOf(sel.transform), MenuFormat.Item(MenuReader.Describe(sel)))}");
+            }
+            catch (Exception ex) { sb.AppendLine("  reader failed: " + ex); }
+        }
 
         Section(sb, "BaseMenu", () =>
         {

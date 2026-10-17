@@ -35,6 +35,12 @@ public sealed class Mod : MelonMod
 
         try { Hotkeys.Tick(); }
         catch (Exception ex) { Log.Once("Hotkeys", ex); }
+
+        try { MenuReader.Tick(); }
+        catch (Exception ex) { Log.Once("MenuReader", ex); }
+
+        try { ScreenWatch.Tick(); }
+        catch (Exception ex) { Log.Once("ScreenWatch", ex); }
     }
 
     /// <summary>Diagnostic: proves the tick runs and shows the scene and UI selection.</summary>
@@ -48,6 +54,8 @@ public sealed class Mod : MelonMod
     public override void OnSceneWasLoaded(int buildIndex, string sceneName)
     {
         Log.Info("Scene", $"loaded {buildIndex} {sceneName}");
+        try { MenuReader.OnSceneLoaded(); ScreenWatch.OnSceneLoaded(); }
+        catch (Exception ex) { Log.Once("SceneLoaded", ex); }
     }
 
     public override void OnDeinitializeMelon() => Speech.Shutdown();
