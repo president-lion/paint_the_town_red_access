@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+    <Nullable>disable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>PaintTheTownRedAccess</AssemblyName>
+    <RootNamespace>PaintTheTownRedAccess</RootNamespace>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GenerateRuntimeConfigurationFiles>false</GenerateRuntimeConfigurationFiles>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+    <DebugType>embedded</DebugType>
+    <!-- Override on the command line: dotnet build -p:GamePath=... -->
+    <GamePath Condition="'$(GamePath)' == ''">E:\modgames\ptr\Paint.the.Town.Red.v1.3.4.VR.DLC</GamePath>
+    <MLDir>$(GamePath)\MelonLoader</MLDir>
+  </PropertyGroup>
+
+  <!--
+    Referenced straight out of the game's MelonLoader install. These interop assemblies were
+    made by tools/InteropGen (see FINDINGS.md), not by MelonLoader's first boot.
+    Private=false: the loader supplies them, we must not ship copies.
+  -->
+  <ItemGroup>
+    <Reference Include="$(MLDir)\net6\MelonLoader.dll" Private="false" />
+    <Reference Include="$(MLDir)\net6\0Harmony.dll" Private="false" />
+    <Reference Include="$(MLDir)\net6\Il2CppInterop.Runtime.dll" Private="false" />
+    <Reference Include="$(MLDir)\net6\Il2CppInterop.Common.dll" Private="false" />
+    <Reference Include="$(MLDir)\Il2CppAssemblies\Il2Cppmscorlib.dll" Private="false" />
+    <Reference Include="$(MLDir)\Il2CppAssemblies\Assembly-CSharp.dll" Private="false" />
+    <Reference Include="$(MLDir)\Il2CppAssemblies\Unity.TextMeshPro.dll" Private="false" />
+    <Reference Include="$(MLDir)\Il2CppAssemblies\UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="$(MLDir)\Il2CppAssemblies\UnityEngine.InputLegacyModule.dll" Private="false" />
+    <Reference Include="$(MLDir)\Il2CppAssemblies\UnityEngine.UI.dll" Private="false" />
+    <Reference Include="$(MLDir)\Il2CppAssemblies\UnityEngine.UIModule.dll" Private="false" />
+    <Reference Include="$(MLDir)\Il2CppAssemblies\UnityEngine.TextRenderingModule.dll" Private="false" />
+  </ItemGroup>
+
+  <!-- Deploy: the mod into Mods\, Prism into UserLibs\. -->
+  <Target Name="Deploy" AfterTargets="Build" Condition="Exists('$(GamePath)\MelonLoader') And '$(SkipDeploy)' != 'true'">
+    <MakeDir Directories="$(GamePath)\Mods;$(GamePath)\UserLibs" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GamePath)\Mods" />
+    <Copy SourceFiles="..\prism\build-x64\prism.dll" DestinationFolder="$(GamePath)\UserLibs"
+          Condition="Exists('..\prism\build-x64\prism.dll')" SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>
