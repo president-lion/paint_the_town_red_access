@@ -42,6 +42,11 @@
   <!-- Deploy: the mod into Mods\, Prism into UserLibs\. -->
   <Target Name="Deploy" AfterTargets="Build" Condition="Exists('$(GamePath)\MelonLoader') And '$(SkipDeploy)' != 'true'">
     <MakeDir Directories="$(GamePath)\Mods;$(GamePath)\UserLibs" />
+    <!-- The running game locks the loaded DLL, but Windows lets a loaded file be renamed:
+         move it aside (MelonLoader only loads *.dll) so installing works while the game runs. -->
+    <Delete Files="$(GamePath)\Mods\$(TargetFileName).old" ContinueOnError="true" />
+    <Exec Command="move /y &quot;$(GamePath)\Mods\$(TargetFileName)&quot; &quot;$(GamePath)\Mods\$(TargetFileName).old&quot;"
+          Condition="Exists('$(GamePath)\Mods\$(TargetFileName)')" ContinueOnError="true" />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GamePath)\Mods" />
     <Copy SourceFiles="..\prism\build-x64\prism.dll" DestinationFolder="$(GamePath)\UserLibs"
           Condition="Exists('..\prism\build-x64\prism.dll')" SkipUnchangedFiles="true" />
