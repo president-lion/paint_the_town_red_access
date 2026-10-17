@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Offline replacement for MelonLoader's first-boot assembly generation. ML runs Cpp2IL with
+    the attributeanalyzer processor, which exhausts RAM (>22 GB) on PTTR's GameAssembly.
+    This runs Cpp2IL without it, then the same Il2CppInterop generator ML uses, with ML's
+    options, and writes Config.cfg so ML sees the assemblies as up to date.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GamePath Condition="'$(GamePath)' == ''">E:\modgames\ptr\Paint.the.Town.Red.v1.3.4.VR.DLC</GamePath>
+    <MLNet6>$(GamePath)\MelonLoader\net6</MLNet6>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="$(MLNet6)\Il2CppInterop.Generator.dll" />
+    <Reference Include="$(MLNet6)\Il2CppInterop.Common.dll" />
+    <Reference Include="$(MLNet6)\Il2CppInterop.Runtime.dll" />
+    <Reference Include="$(MLNet6)\AsmResolver.dll" />
+    <Reference Include="$(MLNet6)\AsmResolver.DotNet.dll" />
+    <Reference Include="$(MLNet6)\AsmResolver.PE.dll" />
+    <Reference Include="$(MLNet6)\AsmResolver.PE.File.dll" />
+    <Reference Include="$(MLNet6)\Iced.dll" />
+    <Reference Include="$(MLNet6)\Microsoft.Extensions.Logging.Abstractions.dll" />
+  </ItemGroup>
+</Project>

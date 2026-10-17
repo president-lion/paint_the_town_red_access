@@ -1,0 +1,13 @@
+bin/
+obj/
+research/
+tools/
+src/prism/
+*.user
+.vs/
+FINDINGS.md
+!tools/
+tools/*
+!tools/InteropGen/
+tools/InteropGen/bin/
+tools/InteropGen/obj/
