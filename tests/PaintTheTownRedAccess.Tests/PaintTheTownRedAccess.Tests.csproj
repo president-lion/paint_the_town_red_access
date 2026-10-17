@@ -13,6 +13,8 @@
     <Compile Include="..\..\src\PaintTheTownRedAccess\Strings.cs" Link="Linked\Strings.cs" />
     <Compile Include="..\..\src\PaintTheTownRedAccess\TextClean.cs" Link="Linked\TextClean.cs" />
     <Compile Include="..\..\src\PaintTheTownRedAccess\MenuFormat.cs" Link="Linked\MenuFormat.cs" />
+    <Compile Include="..\..\src\PaintTheTownRedAccess\Spatial.cs" Link="Linked\Spatial.cs" />
+    <Compile Include="..\..\src\PaintTheTownRedAccess\WavSynth.cs" Link="Linked\WavSynth.cs" />
   </ItemGroup>
 
   <ItemGroup>

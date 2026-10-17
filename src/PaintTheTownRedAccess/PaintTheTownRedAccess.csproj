@@ -31,6 +31,7 @@
     <Reference Include="$(MLDir)\Il2CppAssemblies\Assembly-CSharp.dll" Private="false" />
     <Reference Include="$(MLDir)\Il2CppAssemblies\Unity.TextMeshPro.dll" Private="false" />
     <Reference Include="$(MLDir)\Il2CppAssemblies\Il2CppRewired_Core.dll" Private="false" />
+    <Reference Include="$(MLDir)\Il2CppAssemblies\Il2CppFMODUnity.dll" Private="false" />
     <Reference Include="$(MLDir)\Il2CppAssemblies\UnityEngine.CoreModule.dll" Private="false" />
     <Reference Include="$(MLDir)\Il2CppAssemblies\UnityEngine.InputLegacyModule.dll" Private="false" />
     <Reference Include="$(MLDir)\Il2CppAssemblies\UnityEngine.UI.dll" Private="false" />

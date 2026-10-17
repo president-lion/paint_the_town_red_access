@@ -44,6 +44,12 @@ public sealed class Mod : MelonMod
 
         try { ScreenWatch.Tick(); }
         catch (Exception ex) { Log.Once("ScreenWatch", ex); }
+
+        try { EnemyRadar.Tick(); }
+        catch (Exception ex) { Log.Once("EnemyRadar", ex); }
+
+        try { Scanner.Tick(); }
+        catch (Exception ex) { Log.Once("Scanner", ex); }
     }
 
     /// <summary>Diagnostic: proves the tick runs and shows the scene and UI selection.</summary>
@@ -57,7 +63,7 @@ public sealed class Mod : MelonMod
     public override void OnSceneWasLoaded(int buildIndex, string sceneName)
     {
         Log.Info("Scene", $"loaded {buildIndex} {sceneName}");
-        try { MenuReader.OnSceneLoaded(); ScreenWatch.OnSceneLoaded(); }
+        try { MenuReader.OnSceneLoaded(); ScreenWatch.OnSceneLoaded(); EnemyRadar.OnSceneLoaded(); Scanner.OnSceneLoaded(); }
         catch (Exception ex) { Log.Once("SceneLoaded", ex); }
     }
 

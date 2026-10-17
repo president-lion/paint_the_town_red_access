@@ -26,4 +26,44 @@ internal static class Strings
     public const string Unavailable = "unavailable";
     public const string Paused = "paused";
     public const string NoTabs = "no tabs here";
+
+    // Directions relative to where the player faces, by Spatial.Sector.
+    public static readonly string[] Directions =
+        { "ahead", "ahead right", "right", "behind right", "behind", "behind left", "left", "ahead left" };
+    public const string Close = "close";
+    public const string Metre = "{0} metre";
+    public const string Metres = "{0} metres";
+    public const string Above = "above";
+    public const string Below = "below";
+
+    public const string Health = "health {0}";
+    public const string NotInGame = "not in a level";
+
+    // Scanner (Stardew Access / Setsuna layout).
+    public const string CatAll = "everything";
+    public const string CatEnemies = "enemies";
+    public const string CatWeapons = "weapons";
+    public const string CatItems = "items";
+    public const string CatExits = "exits and doors";
+    public const string CategoryCount = "{0}, {1}";
+    public const string Count0 = "none";
+    public const string Count1 = "1 thing";
+    public const string CountN = "{0} things";
+    public const string NothingNearby = "no {0} nearby";
+    public const string ScanItem = "{0}, {1} of {2}";
+    public const string NothingSelected = "nothing selected";
+    public const string Gone = "{0} is gone";
+    public const string BeaconOn = "beacon on";
+    public const string BeaconOff = "beacon off";
+    public const string Arrived = "arrived at {0}";
+    public const string Angry = "angry";
+    public const string Neutral = "neutral";
+    public const string Friendly = "friendly";
+    public const string Down = "down";
+    public const string Exit = "exit";
+    public const string ExitDoor = "exit door";
+    public const string Door = "door";
+    public const string EnemiesLeft = "{0} enemies left";
+    public const string RadarOn = "enemy sounds on";
+    public const string RadarOff = "enemy sounds off";
 }

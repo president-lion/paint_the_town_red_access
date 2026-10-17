@@ -55,6 +55,24 @@ internal static class TextClean
         return Spaces.Replace(sb.ToString(), " ").Trim().ToLowerInvariant();
     }
 
+    private static readonly HashSet<string> NoiseWords = new(StringComparer.OrdinalIgnoreCase)
+        { "clone", "prefab", "weapon", "pickup", "new", "lod", "lod0", "lod1", "variant", "obj", "mesh", "voxel" };
+
+    /// <summary>A world object's name for the scanner: "Weapon_BeerBottle_02(Clone)" -> "beer bottle".
+    /// Splits on _ - space and camel case, then drops numbers and filler words.</summary>
+    public static string ThingName(string name)
+    {
+        if (string.IsNullOrEmpty(name)) return "";
+        name = Regex.Replace(name, @"\(.*?\)", " ");
+        name = Regex.Replace(name, @"([a-z])([A-Z])", "$1 $2");
+        name = Regex.Replace(name, @"([A-Z]+)([A-Z][a-z])", "$1 $2");
+        var words = Regex.Split(name, @"[\s_\-\.]+")
+            .Where(w => w.Length > 0 && !Regex.IsMatch(w, @"^\d+$") && !NoiseWords.Contains(w))
+            .Select(w => w.ToLowerInvariant());
+        var result = string.Join(" ", words);
+        return result.Length > 0 ? result : "object";
+    }
+
     /// <summary>Slider titles carry their value: "MOUSE SENSITIVITY (1.0)" -> ("MOUSE SENSITIVITY", "1.0").
     /// Returns the input and null when there is no trailing bracket.</summary>
     public static (string title, string value) SplitTrailingValue(string s)

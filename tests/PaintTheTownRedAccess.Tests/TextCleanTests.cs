@@ -29,6 +29,15 @@ public class TextCleanTests
     public void FromObjectName(string input, string expected) => Assert.Equal(expected, TextClean.FromObjectName(input));
 
     [Theory]
+    [InlineData("Weapon_BeerBottle_02(Clone)", "beer bottle")]
+    [InlineData("Chair (3)", "chair")]
+    [InlineData("PoolCue", "pool cue")]
+    [InlineData("BeneathExitDoor", "beneath exit door")]
+    [InlineData("AK47", "ak47")]
+    [InlineData("12", "object")]
+    public void ThingName(string input, string expected) => Assert.Equal(expected, TextClean.ThingName(input));
+
+    [Theory]
     [InlineData("MOUSE SENSITIVITY (1.0)", "MOUSE SENSITIVITY", "1.0")]
     [InlineData("FIELD OF VIEW (VERTICAL) (65.0)", "FIELD OF VIEW (VERTICAL)", "65.0")]
     [InlineData("HUD OPACITY", "HUD OPACITY", null)]
