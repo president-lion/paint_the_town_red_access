@@ -164,11 +164,11 @@ internal static class Scanner
 
     private static void Add(List<Target> list, Kind kind, Transform t, string name, string raw)
     {
-        if (!Game.Frame(t.position, out var r, out var f, out _)) return;
+        if (!Game.Frame(t.position, out var r, out var f, out var up)) return;
         var dist = Mathf.Sqrt(r * r + f * f);
         if (dist > MaxRange) return;
         list.Add(new Target { Kind = kind, T = t, Name = name, Dist = dist });
-        if (Settings.DebugLog) Log.Append("scan.log", $"  {kind} '{raw}' -> '{name}' {dist:0.0}m");
+        if (Settings.DebugLog) Log.Append("scan.log", $"  {kind} '{raw}' -> '{name}' {dist:0.0}m up {up:0.0}");
     }
 
     /// <summary>Two beer bottles become "beer bottle" and "beer bottle 2" (nearest first).</summary>

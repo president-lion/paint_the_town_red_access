@@ -16,10 +16,21 @@ namespace PaintTheTownRedAccess;
 internal static class Turning
 {
     private const int Strafe = 1, LookLeftRight = 8;
-    private static bool _loggedLook;
+    private static bool _loggedLook, _loggedArrow;
+    private static int _calls;
+
+    /// <summary>Diagnostic: on the first arrow press in play, log whether the patch has run at all.</summary>
+    public static void Tick()
+    {
+        if (_loggedArrow || !Game.InPlay) return;
+        if (!Input.GetKeyDown(KeyCode.LeftArrow) && !Input.GetKeyDown(KeyCode.RightArrow)) return;
+        _loggedArrow = true;
+        Log.Info("Turning", $"first arrow press: GetAxis postfix ran {_calls} times, look patched = {_loggedLook}");
+    }
 
     private static void Postfix(int actionID, ref float __result)
     {
+        _calls++;
         if (!Settings.ArrowTurning) return;
         if (actionID != Strafe && actionID != LookLeftRight) return;
         if (!PTTRPlayer.CanControl) return;

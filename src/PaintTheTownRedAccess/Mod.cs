@@ -48,6 +48,9 @@ public sealed class Mod : MelonMod
         try { EnemyRadar.Tick(); }
         catch (Exception ex) { Log.Once("EnemyRadar", ex); }
 
+        try { Turning.Tick(); }
+        catch (Exception ex) { Log.Once("Turning", ex); }
+
         try { PickupAssist.Tick(); }
         catch (Exception ex) { Log.Once("PickupAssist", ex); }
 
