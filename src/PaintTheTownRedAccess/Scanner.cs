@@ -6,7 +6,7 @@ namespace PaintTheTownRedAccess;
 /// <summary>
 /// The object scanner, on the Setsuna / Stardew Access keys:
 ///   PageUp / PageDown        previous / next thing, nearest first
-///   Ctrl+PageUp / PageDown   previous / next category (everything, enemies, weapons, items, exits)
+///   Ctrl+PageUp / PageDown   previous / next category (everything, enemies, weapons, items, exits, buttons)
 ///   Home                     where the selected thing is now
 ///   End                      beacon on/off: a sound from the selected thing until you reach it
 /// Directions are relative to where you face ("ahead left"), distances in metres.
@@ -14,7 +14,7 @@ namespace PaintTheTownRedAccess;
 /// </summary>
 internal static class Scanner
 {
-    private enum Kind { Enemy, Weapon, Item, Exit }
+    private enum Kind { Enemy, Weapon, Item, Exit, Button }
 
     private sealed class Target
     {
@@ -26,7 +26,7 @@ internal static class Scanner
 
     // Category 0 = everything, then one per Kind.
     private static readonly string[] Categories =
-        { Strings.CatAll, Strings.CatEnemies, Strings.CatWeapons, Strings.CatItems, Strings.CatExits };
+        { Strings.CatAll, Strings.CatEnemies, Strings.CatWeapons, Strings.CatItems, Strings.CatExits, Strings.CatButtons };
 
     private const float MaxRange = 150f;
     private const float ArriveDistance = 1.5f;
@@ -155,6 +155,11 @@ internal static class Scanner
                 if (x != null && x.gameObject.activeInHierarchy) Add(list, Kind.Exit, x.transform, Strings.Door, x.gameObject.name);
         }
 
+        if (want is null or Kind.Button)
+            foreach (var b in UnityEngine.Object.FindObjectsOfType<WorldButton>())
+                if (b != null && b.gameObject.activeInHierarchy)
+                    Add(list, Kind.Button, b.transform, ButtonName(b), b.gameObject.name);
+
         list.Sort((a, b) => a.Dist.CompareTo(b.Dist));
         Number(list);
         Log.Append("scan.log", $"[{Categories[_category]}] {list.Count}: " +
@@ -181,6 +186,20 @@ internal static class Scanner
             seen[t.Name] = ++n;
             if (n > 1) t.Name = $"{t.Name} {n}";
         }
+    }
+
+    /// <summary>A world button (sandbox spawners and switches, prison food slot, showers...):
+    /// its label, and on/off for buttons that stay pressed.</summary>
+    public static string ButtonName(WorldButton b)
+    {
+        var label = b.label;
+        if (string.IsNullOrWhiteSpace(label)) label = b.interactUIText;
+        if (b.attemptTranslation) label = UiText.Translate(label);
+        var name = TextClean.Clean(label);
+        if (string.IsNullOrWhiteSpace(name)) name = TextClean.ThingName(b.gameObject.name);
+        if (string.IsNullOrWhiteSpace(name) || name == "object") name = Strings.Button;
+        if (b.stayPressed || b.canUnpress) name += ", " + (b.pressed ? Strings.On : Strings.Off);
+        return name;
     }
 
     private static string EnemyName(Enemy e)

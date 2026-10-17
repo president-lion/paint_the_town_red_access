@@ -45,6 +45,11 @@ internal static class Strings
     public const string CatWeapons = "weapons";
     public const string CatItems = "items";
     public const string CatExits = "exits and doors";
+    public const string CatButtons = "buttons";
+    public const string Button = "button";
+    public const string On = "on";
+    public const string Off = "off";
+    public const string Pressed = "pressed {0}";
     public const string CategoryCount = "{0}, {1}";
     public const string Count0 = "none";
     public const string Count1 = "1 thing";
