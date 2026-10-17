@@ -50,6 +50,9 @@ internal static class Strings
     public const string On = "on";
     public const string Off = "off";
     public const string Pressed = "pressed {0}";
+    public const string NoButtons = "no buttons here";
+    public const string ButtonMenuOpen = "buttons menu, {0} buttons.";
+    public const string MenuClosed = "closed";
     public const string CategoryCount = "{0}, {1}";
     public const string Count0 = "none";
     public const string Count1 = "1 thing";

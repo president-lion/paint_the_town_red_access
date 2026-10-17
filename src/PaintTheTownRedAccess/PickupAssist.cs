@@ -22,7 +22,7 @@ internal static class PickupAssist
 
     public static void Tick()
     {
-        if (!Settings.PickupAssist || !Game.InPlay) { _checkAt = -1f; return; }
+        if (!Settings.PickupAssist || !Game.InPlay || ButtonMenu.BlockingInput) { _checkAt = -1f; return; }
         var p = Game.Player;
         var from = p.transform.position;
         var now = Time.unscaledTime;

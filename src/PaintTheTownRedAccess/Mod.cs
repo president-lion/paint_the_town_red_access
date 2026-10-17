@@ -33,6 +33,9 @@ public sealed class Mod : MelonMod
             try { Heartbeat(); } catch (Exception ex) { Log.Once("Heartbeat", ex); }
         }
 
+        try { ButtonMenu.Tick(); }
+        catch (Exception ex) { Log.Once("ButtonMenu", ex); }
+
         try { Hotkeys.Tick(); }
         catch (Exception ex) { Log.Once("Hotkeys", ex); }
 
@@ -72,7 +75,7 @@ public sealed class Mod : MelonMod
     public override void OnSceneWasLoaded(int buildIndex, string sceneName)
     {
         Log.Info("Scene", $"loaded {buildIndex} {sceneName}");
-        try { MenuReader.OnSceneLoaded(); ScreenWatch.OnSceneLoaded(); EnemyRadar.OnSceneLoaded(); Scanner.OnSceneLoaded(); }
+        try { MenuReader.OnSceneLoaded(); ScreenWatch.OnSceneLoaded(); EnemyRadar.OnSceneLoaded(); Scanner.OnSceneLoaded(); ButtonMenu.OnSceneLoaded(); }
         catch (Exception ex) { Log.Once("SceneLoaded", ex); }
     }
 

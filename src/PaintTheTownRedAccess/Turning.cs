@@ -31,7 +31,7 @@ internal static class Turning
     private static void Postfix(int actionID, ref float __result)
     {
         _calls++;
-        if (!Settings.ArrowTurning) return;
+        if (!Settings.ArrowTurning || ButtonMenu.BlockingInput) return;
         if (actionID != Strafe && actionID != LookLeftRight) return;
         if (!PTTRPlayer.CanControl) return;
 

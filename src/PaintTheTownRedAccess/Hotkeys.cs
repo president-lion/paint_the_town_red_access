@@ -13,6 +13,7 @@ namespace PaintTheTownRedAccess;
 ///   Home                      where the selected thing is
 ///   End                       beacon on/off
 ///   Shift+End                 enemy sounds on/off
+///   M                         buttons menu (ButtonMenu)
 ///   F10  write screen.txt (what is on screen now)
 ///   F11  write rewired.txt (every input action and its bindings)
 /// Left/Right arrows turn in a level: see Turning.
@@ -25,6 +26,7 @@ internal static class Hotkeys
 
         var ctrl = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
         var shift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+        if (ButtonMenu.Open) return; // the menu reads its own keys
         var inPlay = Game.InPlay;
 
         if (Input.GetKeyDown(KeyCode.PageUp)) Page(-1, ctrl, inPlay);
