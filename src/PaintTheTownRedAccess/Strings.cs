@@ -51,8 +51,13 @@ internal static class Strings
     public const string Off = "off";
     public const string Pressed = "pressed {0}";
     public const string NoButtons = "no buttons here";
-    public const string ButtonMenuOpen = "buttons menu, {0} buttons.";
+    public const string ButtonMenuOpen = "buttons menu.";
     public const string MenuClosed = "closed";
+    public const string ButtonTab = "{0}, {1} buttons.";
+    public const string TabEnemies = "enemies";
+    public const string TabWeapons = "weapons";
+    public const string TabPlayer = "player";
+    public const string TabOther = "other";
     public const string CategoryCount = "{0}, {1}";
     public const string Count0 = "none";
     public const string Count1 = "1 thing";

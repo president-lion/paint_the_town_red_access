@@ -6,15 +6,20 @@ namespace PaintTheTownRedAccess;
 
 /// <summary>
 /// M in a level: every world button there (the sandbox spawners and switches, the prison's
-/// food slot and showers...) as a menu. Up/Down move, Home/End jump, Enter or Space presses
+/// food slot and showers...) as a tabbed menu. Tabs by what the button's WorldButtonAction
+/// does: enemies (enemy spawners, ignore player, kill each other), weapons (weapon
+/// spawners, unbreakable), player (invincibility, unlimited power, KO kick), other.
+/// Left/Right switch tab, Up/Down move, Home/End jump, Enter or Space presses
 /// (WorldButton.PressButton, no need to walk there), Escape or M closes. The game's input is
 /// blocked while it is open, and until the closing key is released, by prefixes on
 /// InputSystem's getters (every gameplay action goes through them, rewired.txt has the ids).
 /// </summary>
 internal static class ButtonMenu
 {
-    private static readonly List<WorldButton> _items = new();
-    private static int _index;
+    private static readonly string[] TabNames = { Strings.TabEnemies, Strings.TabWeapons, Strings.TabPlayer, Strings.TabOther };
+    private static readonly List<WorldButton>[] _tabs = { new(), new(), new(), new() };
+    private static List<WorldButton> _items = _tabs[0];
+    private static int _tab, _index;
     private static WorldButton _pressed;
     private static float _sayStateAt = -1f;
 
@@ -38,7 +43,7 @@ internal static class ButtonMenu
     public static void OnSceneLoaded()
     {
         Open = false;
-        _items.Clear();
+        foreach (var t in _tabs) t.Clear();
     }
 
     public static void Tick()
@@ -58,6 +63,8 @@ internal static class ButtonMenu
         }
 
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.M)) { Close(silent: false); return; }
+        if (Input.GetKeyDown(KeyCode.RightArrow)) SwitchTab(1);
+        if (Input.GetKeyDown(KeyCode.LeftArrow)) SwitchTab(-1);
         if (Input.GetKeyDown(KeyCode.DownArrow)) Move(1);
         if (Input.GetKeyDown(KeyCode.UpArrow)) Move(-1);
         if (Input.GetKeyDown(KeyCode.Home)) Move(-_index);
@@ -67,16 +74,56 @@ internal static class ButtonMenu
 
     private static void Show()
     {
-        _items.Clear();
+        foreach (var t in _tabs) t.Clear();
+        var total = 0;
         foreach (var b in UnityEngine.Object.FindObjectsOfType<WorldButton>())
-            if (b != null && b.gameObject.activeInHierarchy) _items.Add(b);
-        if (_items.Count == 0) { Speech.Say(Strings.NoButtons); return; }
-        _items.Sort((a, b) => string.Compare(Scanner.ButtonName(a), Scanner.ButtonName(b), StringComparison.OrdinalIgnoreCase));
+        {
+            if (b == null || !b.gameObject.activeInHierarchy) continue;
+            _tabs[TabOf(b)].Add(b);
+            total++;
+        }
+        if (total == 0) { Speech.Say(Strings.NoButtons); return; }
+        foreach (var t in _tabs)
+            t.Sort((a, b) => string.Compare(Scanner.ButtonName(a), Scanner.ButtonName(b), StringComparison.OrdinalIgnoreCase));
+        _tab = Array.FindIndex(_tabs, t => t.Count > 0);
+        _items = _tabs[_tab];
         _index = 0;
         Open = true;
-        Speech.Say(string.Format(Strings.ButtonMenuOpen, _items.Count) + " " + Line());
-        Log.Info("ButtonMenu", "open: " + string.Join("; ", _items.Select(b => $"{b.gameObject.name}='{Scanner.ButtonName(b)}'")));
+        Speech.Say(Strings.ButtonMenuOpen + " " + TabLine() + " " + Line());
+        for (var i = 0; i < _tabs.Length; i++)
+            Log.Info("ButtonMenu", $"{TabNames[i]}: " + string.Join("; ", _tabs[i].Select(b => $"{b.gameObject.name}='{Scanner.ButtonName(b)}'")));
     }
+
+    /// <summary>Which tab a button belongs to, from the type of its action.</summary>
+    private static int TabOf(WorldButton b)
+    {
+        var a = b.buttonAction;
+        if (a == null) return 3;
+        if (a.TryCast<WorldButtonSpawner>() is { } spawner)
+        {
+            var enemies = spawner.numEnemiesToSpawn > 0 || (spawner.enemyTypes2 != null && spawner.enemyTypes2.Length > 0);
+            return enemies ? 0 : 1;
+        }
+        if (a.TryCast<WorldButtonEnemiesIgnorePlayer>() != null || a.TryCast<WorldButtonEnemiesKillEachother>() != null) return 0;
+        if (a.TryCast<WorldButtonUnbreakableWeapons>() != null) return 1;
+        if (a.TryCast<WorldButtonInvincibility>() != null || a.TryCast<WorldButtonUnlimitedPower>() != null
+            || a.TryCast<WorldButtonAlwaysKOKick>() != null) return 2;
+        return 3;
+    }
+
+    private static void SwitchTab(int step)
+    {
+        var start = _tab;
+        do { _tab = (_tab + step + _tabs.Length) % _tabs.Length; }
+        while (_tabs[_tab].Count == 0 && _tab != start);
+        _items = _tabs[_tab];
+        _items.RemoveAll(b => b == null);
+        _index = 0;
+        if (_items.Count == 0) { Close(silent: true); return; }
+        Speech.Say(TabLine() + " " + Line());
+    }
+
+    private static string TabLine() => string.Format(Strings.ButtonTab, TabNames[_tab], _items.Count);
 
     private static void Close(bool silent)
     {
