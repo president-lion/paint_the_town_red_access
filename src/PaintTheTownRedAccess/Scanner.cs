@@ -185,7 +185,7 @@ internal static class Scanner
 
     private static string EnemyName(Enemy e)
     {
-        var name = TextClean.ThingName(e.thisEnemyType.ToString());
+        var name = EnemyRadar.TypeName(e);
         if (e.IsDown()) name += ", " + Strings.Down;
         var rel = e.playerRelation;
         if (!EnemyRadar.Hostile(e))

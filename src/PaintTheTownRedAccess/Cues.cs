@@ -3,11 +3,11 @@ namespace PaintTheTownRedAccess;
 /// <summary>
 /// The mod's sound cues. Each is a generated placeholder unless
 /// UserData\PaintTheTownRedAccess\sounds\&lt;name&gt;.wav exists, which replaces it
-/// (names: enemy, attack, beacon, arrive, edge).
+/// (names: enemy, attack, reach, beacon, arrive, edge).
 /// </summary>
 internal static class Cues
 {
-    public enum Cue { Enemy, Attack, Beacon, Arrive, Edge }
+    public enum Cue { Enemy, Attack, Reach, Beacon, Arrive, Edge }
 
     private static readonly Dictionary<Cue, IntPtr> _sounds = new();
     private static bool _loaded;
@@ -22,6 +22,8 @@ internal static class Cues
         Cue.Attack => WavSynth.Concat(WavSynth.Tone(900, 1300, 0.06f, WavSynth.Wave.Square, 4f),
                                       WavSynth.Silence(0.02f),
                                       WavSynth.Tone(1100, 1600, 0.06f, WavSynth.Wave.Square, 4f)),
+        // The nearest enemy is in front of you and close enough to hit.
+        Cue.Reach => WavSynth.Tone(2000, 2000, 0.03f, WavSynth.Wave.Sine, 10f),
         Cue.Beacon => WavSynth.Tone(1320, 1320, 0.05f, WavSynth.Wave.Sine, 5f),
         Cue.Arrive => WavSynth.Concat(WavSynth.Tone(660, 660, 0.08f), WavSynth.Tone(990, 990, 0.12f)),
         Cue.Edge => WavSynth.Tone(180, 140, 0.05f, WavSynth.Wave.Noise, 8f),

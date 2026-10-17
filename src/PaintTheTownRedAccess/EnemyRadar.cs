@@ -39,6 +39,13 @@ internal static class EnemyRadar
         Speech.Say(Settings.Radar ? Strings.RadarOn : Strings.RadarOff);
     }
 
+    /// <summary>Enemy.Type as words: Normal (the ordinary brawlers) is "person", BigGuy "big guy".</summary>
+    public static string TypeName(Enemy e)
+    {
+        var type = e.thisEnemyType;
+        return type == Enemy.Type.Normal ? Strings.Person : TextClean.ThingName(type.ToString());
+    }
+
     public static bool Hostile(Enemy e) =>
         e.IsFightingPlayer() || e.playerRelation == Enemy.PlayerRelation.Angry;
 
@@ -87,6 +94,15 @@ internal static class EnemyRadar
             t.WasAttacking = attacking;
 
             if (i >= MaxVoices || s.Enemy.IsDown() || now < t.NextPing) continue;
+
+            // The nearest one, close enough to hit and in front of you: a quick high tick
+            // instead of the knock, meaning "swing now".
+            if (i == 0 && Spatial.InReach(s.Right, s.Forward, Settings.Reach))
+            {
+                t.NextPing = now + 0.3f;
+                Cues.Play(Cues.Cue.Reach, place);
+                continue;
+            }
             t.NextPing = now + Spatial.PingInterval(s.Dist, range);
             Cues.Play(Cues.Cue.Enemy, place);
         }

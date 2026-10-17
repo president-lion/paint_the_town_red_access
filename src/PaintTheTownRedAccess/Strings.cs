@@ -63,6 +63,7 @@ internal static class Strings
     public const string PickedUp = "picked up {0}";
     public const string NothingInReach = "nothing in reach";
     public const string Exit = "exit";
+    public const string Person = "person";
     public const string ExitDoor = "exit door";
     public const string Door = "door";
     public const string EnemiesLeft = "{0} enemies left";

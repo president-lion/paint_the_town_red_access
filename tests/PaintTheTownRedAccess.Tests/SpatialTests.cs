@@ -56,3 +56,15 @@ public class SpatialTests
         Assert.Equal(44 + (int)(WavSynth.Rate * 0.1f) * 2, wav.Length);
     }
 }
+
+public class ReachTests
+{
+    [Theory]
+    [InlineData(0, 1.5f, true)]
+    [InlineData(0.5f, 1.5f, true)]
+    [InlineData(1.5f, 1.5f, false)]  // 45 degrees off
+    [InlineData(0, 3f, false)]       // too far
+    [InlineData(0, -1f, false)]      // behind
+    public void InReach(float right, float forward, bool expected) =>
+        Assert.Equal(expected, Spatial.InReach(right, forward, 2.2f));
+}
