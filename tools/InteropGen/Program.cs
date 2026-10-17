@@ -20,9 +20,10 @@ string dumpDir = Path.Combine(work, "cpp2il_out");
 string outDir = Path.Combine(work, "Il2CppAssemblies");
 if (Directory.Exists(work)) Directory.Delete(work, true);
 
-// 1. Cpp2IL dummy dlls, no attribute processors.
+// 1. Cpp2IL dummy dlls. attributeinjector adds the Address/Token attributes Il2CppInterop binds
+//    methods with; attributeanalyzer (ML also runs it) is the step that exhausts memory, so skip it.
 var psi = new ProcessStartInfo(Path.Combine(gen, "Cpp2IL", "Cpp2IL.exe"),
-    $"--game-path \"{game}\" --exe-name \"{exeName}\" --output-as dummydll --output-to \"{dumpDir}\"")
+    $"--game-path \"{game}\" --exe-name \"{exeName}\" --output-as dummydll --use-processor attributeinjector --output-to \"{dumpDir}\"")
 { UseShellExecute = false };
 psi.Environment["NO_COLOR"] = "1";
 using (var p = Process.Start(psi)) { p.WaitForExit(); if (p.ExitCode != 0) { Console.Error.WriteLine("Cpp2IL failed"); return 1; } }

@@ -2,7 +2,7 @@
   <!--
     Offline replacement for MelonLoader's first-boot assembly generation. ML runs Cpp2IL with
     the attributeanalyzer processor, which exhausts RAM (>22 GB) on PTTR's GameAssembly.
-    This runs Cpp2IL without it, then the same Il2CppInterop generator ML uses, with ML's
+    This runs Cpp2IL with only attributeinjector, then the same Il2CppInterop generator ML uses, with ML's
     options, and writes Config.cfg so ML sees the assemblies as up to date.
   -->
   <PropertyGroup>
