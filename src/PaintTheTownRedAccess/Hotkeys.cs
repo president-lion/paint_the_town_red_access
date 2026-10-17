@@ -6,7 +6,7 @@ namespace PaintTheTownRedAccess;
 /// The mod's own keys, read as raw keyboard state (the game reads input through Rewired).
 /// F12 belongs to NVDA and is never bound.
 ///   F3   repeat the last line
-///   Ctrl stop speech
+///   (no Ctrl: it is the game's crouch key, and NVDA already stops speech on Ctrl)
 ///   F10  write screen.txt (what is on screen now)
 ///   F11  write rewired.txt (every input action and its bindings)
 ///   PageUp / PageDown  previous / next tab (options menus)
@@ -26,7 +26,6 @@ internal static class Hotkeys
             Speech.Say(Strings.InputDumpWritten);
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl)) Speech.Stop();
 
         if (Input.GetKeyDown(KeyCode.F10))
         {
