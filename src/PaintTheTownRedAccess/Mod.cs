@@ -51,6 +51,9 @@ public sealed class Mod : MelonMod
         try { Turning.Tick(); }
         catch (Exception ex) { Log.Once("Turning", ex); }
 
+        try { HitCheck.Tick(); }
+        catch (Exception ex) { Log.Once("HitCheck", ex); }
+
         try { PickupAssist.Tick(); }
         catch (Exception ex) { Log.Once("PickupAssist", ex); }
 

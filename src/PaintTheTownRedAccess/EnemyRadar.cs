@@ -94,15 +94,6 @@ internal static class EnemyRadar
             t.WasAttacking = attacking;
 
             if (i >= MaxVoices || s.Enemy.IsDown() || now < t.NextPing) continue;
-
-            // The nearest one, close enough to hit and in front of you: a quick high tick
-            // instead of the knock, meaning "swing now".
-            if (i == 0 && Spatial.InReach(s.Right, s.Forward, Settings.Reach))
-            {
-                t.NextPing = now + 0.3f;
-                Cues.Play(Cues.Cue.Reach, place);
-                continue;
-            }
             t.NextPing = now + Spatial.PingInterval(s.Dist, range);
             Cues.Play(Cues.Cue.Enemy, place);
         }

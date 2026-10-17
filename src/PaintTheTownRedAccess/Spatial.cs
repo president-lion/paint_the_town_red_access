@@ -51,15 +51,6 @@ internal static class Spatial
         return new Placement(pan, volume, pitch);
     }
 
-    /// <summary>Within reach and inside a 25 degree cone ahead: a swing would land.</summary>
-    public static bool InReach(float right, float forward, float reach)
-    {
-        if (forward <= 0) return false;
-        var dist = MathF.Sqrt(right * right + forward * forward);
-        if (dist > reach) return false;
-        return MathF.Atan2(MathF.Abs(right), forward) * 180f / MathF.PI <= 25f;
-    }
-
     /// <summary>Seconds between radar pings: quick when close, slow at the edge of range.</summary>
     public static float PingInterval(float dist, float range)
     {

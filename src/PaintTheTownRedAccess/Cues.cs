@@ -22,8 +22,8 @@ internal static class Cues
         Cue.Attack => WavSynth.Concat(WavSynth.Tone(900, 1300, 0.06f, WavSynth.Wave.Square, 4f),
                                       WavSynth.Silence(0.02f),
                                       WavSynth.Tone(1100, 1600, 0.06f, WavSynth.Wave.Square, 4f)),
-        // The nearest enemy is in front of you and close enough to hit.
-        Cue.Reach => WavSynth.Tone(2000, 2000, 0.03f, WavSynth.Wave.Sine, 10f),
+        // A swing now would hit someone (HitCheck, every 100 ms).
+        Cue.Reach => WavSynth.Tone(1500, 1500, 0.04f, WavSynth.Wave.Sine, 6f),
         Cue.Beacon => WavSynth.Tone(1320, 1320, 0.05f, WavSynth.Wave.Sine, 5f),
         Cue.Arrive => WavSynth.Concat(WavSynth.Tone(660, 660, 0.08f), WavSynth.Tone(990, 990, 0.12f)),
         Cue.Edge => WavSynth.Tone(180, 140, 0.05f, WavSynth.Wave.Noise, 8f),

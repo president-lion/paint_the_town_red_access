@@ -22,7 +22,9 @@ internal static class Settings
     public static float TurnSpeed => Math.Clamp(_turnSpeed?.Value ?? 1f, 0.1f, 5f);
     public static float CueVolume => Math.Clamp(_cueVolume?.Value ?? 0.8f, 0f, 1f);
     public static bool PickupAssist => _pickupAssist?.Value ?? true;
-    public static float Reach => Math.Clamp(_reach?.Value ?? 2.2f, 0.5f, 6f);
+    public static float Reach => Math.Clamp(_reach?.Value ?? 1.8f, 0.5f, 6f);
+    public static bool HitBeep => _hitBeep?.Value ?? true;
+    private static MelonPreferences_Entry<bool> _hitBeep;
     private static MelonPreferences_Entry<float> _reach;
     private static MelonPreferences_Entry<bool> _pickupAssist;
 
@@ -46,8 +48,10 @@ internal static class Settings
         _turnSpeed = cat.CreateEntry("TurnSpeed", 1f, "Turn speed",
             "Multiplies the game's gamepad turn speed for the arrow keys");
         _cueVolume = cat.CreateEntry("CueVolume", 0.8f, "Mod sound volume", "0 to 1");
-        _reach = cat.CreateEntry("Reach", 2.2f, "Hitting distance",
-            "Metres within which the nearest enemy in front of you plays the 'swing now' tick");
+        _hitBeep = cat.CreateEntry("HitBeep", true, "Swing-would-hit beep",
+            "A quiet beep every 100 ms while a swing straight ahead would hit someone");
+        _reach = cat.CreateEntry("Reach", 1.8f, "Swing distance",
+            "Metres ahead from your eyes that a swing reaches, for the hit beep");
         _pickupAssist = cat.CreateEntry("PickupAssist", true, "Pick up without aiming",
             "If E picks nothing up, take the nearest weapon within reach");
         _debugLog = cat.CreateEntry("DebugLog", true, "Verbose logging");
