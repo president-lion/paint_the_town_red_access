@@ -121,8 +121,12 @@ internal static class ButtonMenu
                 string differ = null;
                 for (var d = 0; d < mine.Count && differ == null; d++)
                     if (paths.Any(other => d >= other.Count || other[d] != mine[d])) differ = mine[d];
-                _suffix[buttons[i].Pointer] = differ != null ? TextClean.ThingName(differ) : (i + 1).ToString();
+                _suffix[buttons[i].Pointer] = differ != null ? TextClean.ThingName(differ) : "";
             }
+            // Paths that only differ by a copy number ("Cannon" / "Cannon (1)") clean to the same
+            // words: number the group instead.
+            if (buttons.Select(b => _suffix[b.Pointer]).Distinct().Count() < buttons.Count)
+                for (var i = 0; i < buttons.Count; i++) _suffix[buttons[i].Pointer] = (i + 1).ToString();
         }
     }
 

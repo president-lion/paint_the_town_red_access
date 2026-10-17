@@ -188,6 +188,9 @@ internal static class Scanner
         }
     }
 
+    private static readonly HashSet<string> GenericNames = new(StringComparer.OrdinalIgnoreCase)
+        { "button", "box", "object", "label", "button pedestal", "pedestal", "dynamic" };
+
     /// <summary>A world button (sandbox spawners and switches, prison food slot, showers...):
     /// its label, and on/off for buttons that stay pressed.</summary>
     public static string ButtonName(WorldButton b)
@@ -196,8 +199,19 @@ internal static class Scanner
         if (string.IsNullOrWhiteSpace(label)) label = b.interactUIText;
         if (b.attemptTranslation) label = UiText.Translate(label);
         var name = TextClean.Clean(label);
-        if (string.IsNullOrWhiteSpace(name)) name = TextClean.ThingName(b.gameObject.name);
-        if (string.IsNullOrWhiteSpace(name) || name == "object") name = Strings.Button;
+        // Some buttons keep the prefab's placeholder text "Label" (Pirate Cove's cannons): name them
+        // after the nearest ancestor with a meaningful name (Cannon/Cannon/Box380/Button -> cannon).
+        if (string.IsNullOrWhiteSpace(name) || name.Equals("label", StringComparison.OrdinalIgnoreCase))
+        {
+            name = null;
+            for (var t = b.transform; t != null && name == null; t = t.parent)
+            {
+                var n = TextClean.ThingName(t.name);
+                var key = System.Text.RegularExpressions.Regex.Replace(n, @"\d+$", "").Trim();
+                if (!GenericNames.Contains(key)) name = n;
+            }
+        }
+        if (string.IsNullOrWhiteSpace(name)) name = Strings.Button;
         if (b.stayPressed || b.canUnpress) name += ", " + (b.pressed ? Strings.On : Strings.Off);
         return name;
     }
