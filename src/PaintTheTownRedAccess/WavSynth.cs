@@ -44,6 +44,19 @@ internal static class WavSynth
 
     public static float[] Silence(float seconds) => new float[(int)(Rate * seconds)];
 
+    /// <summary>Sine notes sounded together, with a short attack and an exponential decay.</summary>
+    public static float[] Chord(float[] freqs, float seconds, float decay = 4f)
+    {
+        var n = (int)(Rate * seconds);
+        var s = new float[n];
+        foreach (var f in freqs)
+        {
+            var tone = Tone(f, f, seconds, Wave.Sine, decay);
+            for (var i = 0; i < n; i++) s[i] += tone[i] / freqs.Length;
+        }
+        return s;
+    }
+
     /// <summary>
     /// A loopable crackle like a fire or a Geiger counter: random short noise clicks of random
     /// loudness over a faint hiss. Played looped; FMOD pitch speeds it up.

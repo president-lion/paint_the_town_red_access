@@ -3,11 +3,11 @@ namespace PaintTheTownRedAccess;
 /// <summary>
 /// The mod's sound cues. Each is a generated placeholder unless
 /// UserData\PaintTheTownRedAccess\sounds\&lt;name&gt;.wav exists, which replaces it
-/// (names: enemy, attack, reach, beacon, arrive, edge, danger). Danger is a loop.
+/// (names: enemy, attack, reach, beacon, arrive, edge, danger, hit, break). Danger is a loop.
 /// </summary>
 internal static class Cues
 {
-    public enum Cue { Enemy, Attack, Reach, Beacon, Arrive, Edge, Danger }
+    public enum Cue { Enemy, Attack, Reach, Beacon, Arrive, Edge, Danger, Hit, Break }
 
     private static readonly Dictionary<Cue, IntPtr> _sounds = new();
     private static bool _loaded;
@@ -29,6 +29,10 @@ internal static class Cues
         Cue.Beacon => WavSynth.Tone(1320, 1320, 0.05f, WavSynth.Wave.Sine, 5f),
         Cue.Arrive => WavSynth.Concat(WavSynth.Tone(660, 660, 0.08f), WavSynth.Tone(990, 990, 0.12f)),
         Cue.Edge => WavSynth.Tone(180, 140, 0.05f, WavSynth.Wave.Noise, 8f),
+        // You landed a hit: 2100 Hz with a 300 ms release.
+        Cue.Hit => WavSynth.Tone(2100, 2100, 0.3f, WavSynth.Wave.Sine, 5f),
+        // Your weapon broke: a G diminished chord (G4, B flat 4, D flat 5).
+        Cue.Break => WavSynth.Chord(new[] { 392.00f, 466.16f, 554.37f }, 0.7f, 3.5f),
         // Deadly water or a big drop nearby: a continuous crackle (DangerProbe).
         Cue.Danger => WavSynth.Crackle(2f, 45f),
         _ => WavSynth.Tone(440, 440, 0.05f),

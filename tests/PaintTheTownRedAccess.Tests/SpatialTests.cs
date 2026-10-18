@@ -65,4 +65,12 @@ public class SpatialTests
         // Clicks stand out of the hiss.
         Assert.True(c.Count(v => MathF.Abs(v) > 0.2f) > 45);
     }
+
+    [Fact]
+    public void ChordStaysInRange()
+    {
+        var c = WavSynth.Chord(new[] { 392.00f, 466.16f, 554.37f }, 0.7f, 3.5f);
+        Assert.Equal((int)(WavSynth.Rate * 0.7f), c.Length);
+        Assert.All(c, v => Assert.InRange(v, -1f, 1f));
+    }
 }
