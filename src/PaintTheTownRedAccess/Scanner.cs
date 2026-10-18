@@ -74,10 +74,13 @@ internal static class Scanner
         Speech.Say(Describe(_selectedName, _selected));
     }
 
+    public static void StopBeacon() => _beacon = false;
+
     public static void ToggleBeacon()
     {
         if (!_beacon && _selected == null) { Speech.Say(Strings.NothingSelected); return; }
         _beacon = !_beacon;
+        if (_beacon) WeaponSeek.Stop();
         PathGuide.Reset();
         Speech.Say(_beacon ? Strings.BeaconOn : Strings.BeaconOff);
     }

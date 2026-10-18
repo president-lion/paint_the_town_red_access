@@ -84,6 +84,8 @@ internal static class Strings
     public const string EnemiesLeft = "{0} enemies left";
     public const string RadarOn = "enemy sounds on";
     public const string RadarOff = "enemy sounds off";
+    public const string SeekOff = "weapon guide off";
+    public const string NoWeapons = "no loose weapons";
     public const string Traps1 = "1 trap on the floor";
     public const string TrapsN = "{0} traps on the floor";
 }
