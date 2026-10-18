@@ -9,7 +9,7 @@ using Il2CppInterop.Generator.Runners;
 using Microsoft.Extensions.Logging;
 
 // Usage: InteropGen <game dir>
-string game = args.Length > 0 ? args[0] : @"E:\modgames\ptr\Paint.the.Town.Red.v1.3.4.VR.DLC";
+string game = args.Length > 0 ? args[0] : @"D:\steamlib\steamapps\common\Paint the Town Red";
 string ml = Path.Combine(game, "MelonLoader");
 string gen = Path.Combine(ml, "Dependencies", "Il2CppAssemblyGenerator");
 string gameAssembly = Path.Combine(game, "GameAssembly.dll");

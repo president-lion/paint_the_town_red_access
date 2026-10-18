@@ -10,7 +10,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <GamePath Condition="'$(GamePath)' == ''">E:\modgames\ptr\Paint.the.Town.Red.v1.3.4.VR.DLC</GamePath>
+    <GamePath Condition="'$(GamePath)' == ''">D:\steamlib\steamapps\common\Paint the Town Red</GamePath>
     <MLNet6>$(GamePath)\MelonLoader\net6</MLNet6>
   </PropertyGroup>
   <ItemGroup>
