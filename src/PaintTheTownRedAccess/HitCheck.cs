@@ -18,6 +18,7 @@ internal static class HitCheck
 
     private static float _next;
     private static bool _logged;
+    private static IntPtr _channel;
 
     public static void Tick()
     {
@@ -30,7 +31,10 @@ internal static class HitCheck
         if (view == null) return;
         var target = FirstHit(view.position, view.forward, Settings.Reach);
         if (target == null) return;
-        Cues.Play2D(Cues.Cue.Reach, 0.35f);
+        // A replacement reach.wav can be longer than the 100 ms tick: wait for it to finish
+        // rather than stacking copies, so a long sound simply repeats back to back.
+        if (Fmod.IsPlaying(_channel)) return;
+        _channel = Cues.Play2D(Cues.Cue.Reach, 0.35f);
         if (!_logged) { _logged = true; Log.Info("HitCheck", $"first in-reach target: {target.gameObject.name}"); }
     }
 

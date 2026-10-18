@@ -58,13 +58,14 @@ internal static class Cues
         return true;
     }
 
-    public static void Play(Cue cue, Placement p)
+    /// <summary>Plays a cue once; returns its channel (0 when nothing played).</summary>
+    public static IntPtr Play(Cue cue, Placement p)
     {
-        if (!Load()) return;
-        Fmod.Play(_sounds[cue], p, Settings.CueVolume);
+        if (!Load()) return IntPtr.Zero;
+        return Fmod.Play(_sounds[cue], p, Settings.CueVolume);
     }
 
-    public static void Play2D(Cue cue, float volume = 1f) => Play(cue, new Placement(0f, volume, 1f));
+    public static IntPtr Play2D(Cue cue, float volume = 1f) => Play(cue, new Placement(0f, volume, 1f));
 
     /// <summary>
     /// Keeps a looping cue playing with this placement, starting it if needed, and returns its
