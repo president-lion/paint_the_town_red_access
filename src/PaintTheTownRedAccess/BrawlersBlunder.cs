@@ -11,7 +11,8 @@ namespace PaintTheTownRedAccess;
 /// real call from Arena.Start; it sets currentChallenge and calls BeginNextFight, which reads
 /// fights[CurrentFightIndex] and fights.Count, so any length works) gets a generated challenge
 /// instead. Ten fights (ArenaChallengeIcons has art for ten waves) that grow from three
-/// ordinary enemies to a crowd with bosses; every fifth fight is a boss fight. Enemies and
+/// ordinary enemies to a crowd of twelve - ordinary people only (bikers, disco crowd,
+/// prisoners, pirates, chefs, cooks): no bosses, boxers, bouncers, guards or other specials. Enemies and
 /// weapons are drawn at random from every fight of every real challenge, so they are set up
 /// exactly as the game sets them up; no traps. During a fight a random weapon falls from the
 /// sky near you every 12 to 20 seconds (EntityManager.CreateWeapon), with a falling whistle
@@ -22,10 +23,10 @@ internal static class BrawlersBlunder
 {
     private const int Fights = 10;
 
-    private static readonly Arena.ChallengeEnemy.Type[] Bosses =
+    private static readonly Arena.ChallengeEnemy.Type[] Ordinary =
     {
-        Arena.ChallengeEnemy.Type.BikerBoss, Arena.ChallengeEnemy.Type.DiscoBoss, Arena.ChallengeEnemy.Type.Blackbeard,
-        Arena.ChallengeEnemy.Type.BigPrisoner, Arena.ChallengeEnemy.Type.PirateCaptain, Arena.ChallengeEnemy.Type.Pimp,
+        Arena.ChallengeEnemy.Type.Biker, Arena.ChallengeEnemy.Type.Disco, Arena.ChallengeEnemy.Type.Prisoner,
+        Arena.ChallengeEnemy.Type.Pirate, Arena.ChallengeEnemy.Type.Chef, Arena.ChallengeEnemy.Type.Cook,
     };
 
     private static readonly System.Random _rnd = new();
@@ -71,7 +72,6 @@ internal static class BrawlersBlunder
     private static Arena.Challenge Build(Arena arena)
     {
         var enemies = new List<Arena.ChallengeEnemy>();
-        var bosses = new List<Arena.ChallengeEnemy>();
         var weapons = new List<WeaponInfo>();
         var seen = new HashSet<IntPtr>();
         foreach (var set in new[] { arena.challenges, arena.arenaChallenges })
@@ -85,14 +85,14 @@ internal static class BrawlersBlunder
                     if (fight == null) continue;
                     if (fight.enemies != null)
                         foreach (var e in fight.enemies)
-                            if (e != null) (Bosses.Contains(e.type) ? bosses : enemies).Add(e);
+                            if (e != null && Ordinary.Contains(e.type)) enemies.Add(e);
                     if (fight.weapons != null)
                         foreach (var w in fight.weapons)
                             if (w != null && w.weaponInfo != null) weapons.Add(w.weaponInfo);
                 }
             }
         }
-        Log.Info("Blunder", $"pool: {enemies.Count} enemies, {bosses.Count} bosses, {weapons.Count} weapons");
+        Log.Info("Blunder", $"pool: {enemies.Count} ordinary enemies, {weapons.Count} weapons");
         if (enemies.Count == 0 || weapons.Count == 0) return null;
         _weaponPool.Clear();
         _weaponPool.AddRange(weapons);
@@ -114,12 +114,7 @@ internal static class BrawlersBlunder
                 weapons = new Il2CppList.List<Arena.ChallengeWeapon>(),
             };
 
-            // Every fifth fight: bosses with a few helpers. Otherwise a growing crowd, with a
-            // chance of one boss from fight six on.
-            var boss = n % 5 == 0 && bosses.Count > 0;
-            var count = boss ? 2 + n / 5 : Math.Min(2 + n, 12);
-            var bossCount = boss ? n / 5 : (n >= 6 && bosses.Count > 0 && _rnd.NextDouble() < 0.4 ? 1 : 0);
-            for (var i = 0; i < bossCount; i++) fight.enemies.Add(Copy(bosses[_rnd.Next(bosses.Count)]));
+            var count = Math.Min(2 + n, 12);
             for (var i = 0; i < count; i++) fight.enemies.Add(Copy(enemies[_rnd.Next(enemies.Count)]));
 
             var weaponCount = 8 + n;
@@ -135,7 +130,7 @@ internal static class BrawlersBlunder
                 });
             }
             challenge.fights.Add(fight);
-            Log.Info("Blunder", $"fight {n}: {fight.enemies.Count} enemies ({bossCount} bosses), {weaponCount} weapons");
+            Log.Info("Blunder", $"fight {n}: {fight.enemies.Count} enemies, {weaponCount} weapons");
         }
         return challenge;
     }
