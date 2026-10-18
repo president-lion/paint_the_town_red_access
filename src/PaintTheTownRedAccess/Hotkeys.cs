@@ -41,6 +41,7 @@ internal static class Hotkeys
             if (Input.GetKeyDown(KeyCode.H)) Game.SayHealth();
             if (Input.GetKeyDown(KeyCode.Z)) FaceEnemy.Turn();
             if (Input.GetKeyDown(KeyCode.V)) WeaponSeek.Toggle();
+            if (Input.GetKeyDown(KeyCode.J)) Openings.Say();
             if (Input.GetKeyDown(KeyCode.Home)) Scanner.SaySelected();
             if (Input.GetKeyDown(KeyCode.End))
             {

@@ -22,7 +22,12 @@ internal static class WeaponSeek
 
     public static bool Active => _target != null;
 
-    public static void OnSceneLoaded() => _target = null;
+    // Weapons V gave up on this level (could not get closer for a while: on a shelf, behind a counter).
+    private static readonly HashSet<IntPtr> _unreachable = new();
+    private static float _closest, _progressAt;
+    private const float GiveUpAfter = 8f;
+
+    public static void OnSceneLoaded() { _target = null; _unreachable.Clear(); }
 
     public static void Toggle()
     {
@@ -63,6 +68,20 @@ internal static class WeaponSeek
         if (TryTake(p)) return;
 
         var now = Time.unscaledTime;
+        // Give up on a weapon you cannot get any closer to, and go for the next one.
+        var flatDist = Flat(_target.transform.position - p.transform.position).magnitude;
+        if (flatDist < _closest - 0.5f) { _closest = flatDist; _progressAt = now; }
+        else if (now - _progressAt > GiveUpAfter)
+        {
+            Log.Info("Seek", $"no progress to '{_target.gameObject.name}' for {GiveUpAfter} s, skipping it");
+            _unreachable.Add(_target.Pointer);
+            var lost = _name;
+            if (!Pick(null)) { Stop(); Speech.Say(string.Format(Strings.CantReach, lost) + ". " + Strings.NoWeapons); return; }
+            PathGuide.Reset();
+            Speech.Say(string.Format(Strings.CantReach, lost) + ". " +
+                       $"{_name}, {Spatial.Distance(Flat(_target.transform.position - p.transform.position).magnitude)}");
+            return;
+        }
         if (now < _nextPing) return;
         var steer = PathGuide.Steer(p.transform.position, _target.transform.position);
         if (!Game.Frame(steer, out var r, out var f, out _)) return;
@@ -108,12 +127,15 @@ internal static class WeaponSeek
         {
             if (!Free(w) || (except != null && w.Pointer == except.Pointer)) continue;
             var d = w.transform.position - from;
-            if (Mathf.Abs(d.y) > 4f) continue; // other floors
+            // Out of arm's reach above or below (shelves, other floors), or given up on before.
+            if (Mathf.Abs(d.y) > 1.8f || _unreachable.Contains(w.Pointer)) continue;
             var dist = Flat(d).magnitude;
             if (dist < best) { best = dist; _target = w; }
         }
         if (_target == null) return false;
         _name = TextClean.ThingName(_target.gameObject.name);
+        _closest = best;
+        _progressAt = Time.unscaledTime;
         Log.Info("Seek", $"target '{_target.gameObject.name}' {best:0.0} m");
         return true;
     }

@@ -178,7 +178,7 @@ internal static class DangerProbe
     }
 
     /// <summary>Static level geometry: not a trigger, a kill zone, a loose prop or a person.</summary>
-    private static bool IsSolid(Collider c)
+    public static bool IsSolid(Collider c)
     {
         if (c == null || c.isTrigger || _killColliders.Contains(c.Pointer)) return false;
         var rb = c.attachedRigidbody;

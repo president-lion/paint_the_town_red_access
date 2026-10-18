@@ -3,11 +3,11 @@ namespace PaintTheTownRedAccess;
 /// <summary>
 /// The mod's sound cues. Each is a generated placeholder unless
 /// UserData\PaintTheTownRedAccess\sounds\&lt;name&gt;.wav exists, which replaces it
-/// (names: enemy, attack, reach, beacon, arrive, edge, danger, hit, break, trap, drop). Danger and trap are loops.
+/// (names: enemy, attack, reach, beacon, arrive, edge, danger, hit, break, trap, drop, bump). Danger and trap are loops.
 /// </summary>
 internal static class Cues
 {
-    public enum Cue { Enemy, Attack, Reach, Beacon, Arrive, Edge, Danger, Hit, Break, Trap, Drop }
+    public enum Cue { Enemy, Attack, Reach, Beacon, Arrive, Edge, Danger, Hit, Break, Trap, Drop, Bump }
 
     private static readonly Dictionary<Cue, IntPtr> _sounds = new();
     private static bool _loaded;
@@ -33,6 +33,8 @@ internal static class Cues
         Cue.Trap => WavSynth.Buzz(110f, 6f, 1f),
         // A weapon falling from the sky (BrawlersBlunder): a falling whistle.
         Cue.Drop => WavSynth.Tone(1400, 500, 0.35f, WavSynth.Wave.Sine, 2f),
+        // You walked into something (WallBump): a short low thud.
+        Cue.Bump => WavSynth.Tone(120, 60, 0.1f, WavSynth.Wave.Sine, 10f),
         // You landed a hit: 2100 Hz with a 300 ms release.
         Cue.Hit => WavSynth.Tone(2100, 2100, 0.3f, WavSynth.Wave.Sine, 5f),
         // Your weapon broke: a G diminished chord (G4, B flat 4, D flat 5).
