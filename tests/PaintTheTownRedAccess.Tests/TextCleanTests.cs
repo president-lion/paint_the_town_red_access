@@ -73,4 +73,10 @@ public class MenuFormatTests
         Assert.Equal("options. vibration", MenuFormat.WithContext("options", "vibration"));
         Assert.Equal("vibration", MenuFormat.WithContext("", "vibration"));
     }
+
+    [Fact]
+    public void PairsArenaStatLabelsWithValues()
+    {
+        Assert.Equal("wave time 31.9, total time 31.9", MenuFormat.PairLines("WAVE TIME:\nTOTAL TIME:", "31.857\n31.857"));
+    }
 }

@@ -59,8 +59,10 @@ internal static class ScreenWatch
         if (_arenaStats != null) Watch("arenaStats", _arenaStats.statsLeftText);
         if (_waveStats != null)
         {
-            Watch("waveStatsLeft", _waveStats.leftSideText);
-            Watch("waveStats", _waveStats.statsLeftText);
+            // Labels ("wave time:") and values ("31.857") are two separate texts, one line each.
+            var labels = UiText.Showing(_waveStats.statsLeftText) ? _waveStats.statsLeftText.text : null;
+            var values = UiText.Showing(_waveStats.leftSideText) ? _waveStats.leftSideText.text : null;
+            WatchText("waveStats", labels == null || values == null ? "" : MenuFormat.PairLines(labels, values));
         }
 
         var area = BeneathAreaUI.Instance;
@@ -90,9 +92,11 @@ internal static class ScreenWatch
     }
 
     /// <summary>Speaks the text when it appears or changes; true when it did.</summary>
-    private static bool Watch(string key, TMP_Text t, string format = null)
+    private static bool Watch(string key, TMP_Text t, string format = null) =>
+        WatchText(key, UiText.Showing(t) ? TextClean.Clean(t.text) : "", format);
+
+    private static bool WatchText(string key, string text, string format = null)
     {
-        var text = UiText.Showing(t) ? TextClean.Clean(t.text) : "";
         _last.TryGetValue(key, out var was);
         if (text == (was ?? "")) return false;
         _last[key] = text;

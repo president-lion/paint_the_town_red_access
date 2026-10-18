@@ -38,4 +38,26 @@ internal static class MenuFormat
     /// <summary>Joins the screen title (only when it changed) with the item line.</summary>
     public static string WithContext(string context, string item) =>
         string.IsNullOrWhiteSpace(context) ? item : $"{context}. {item}";
+
+    /// <summary>
+    /// Joins a column of labels with a column of values line by line: "wave time:" and
+    /// "31.857" become "wave time 31.9". Numbers are rounded to one decimal.
+    /// </summary>
+    public static string PairLines(string labels, string values)
+    {
+        static string[] Lines(string s) => s.Replace("<br>", "\n").Replace("\r", "").Split('\n');
+        var l = Lines(labels);
+        var v = Lines(values);
+        var parts = new List<string>();
+        for (var i = 0; i < Math.Max(l.Length, v.Length); i++)
+        {
+            var label = i < l.Length ? TextClean.Clean(l[i]).TrimEnd(':', ' ') : "";
+            var value = i < v.Length ? TextClean.Clean(v[i]) : "";
+            if (double.TryParse(value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var d))
+                value = Math.Round(d, 1).ToString(System.Globalization.CultureInfo.InvariantCulture);
+            var both = (label + " " + value).Trim();
+            if (both.Length > 0) parts.Add(both);
+        }
+        return string.Join(", ", parts);
+    }
 }
