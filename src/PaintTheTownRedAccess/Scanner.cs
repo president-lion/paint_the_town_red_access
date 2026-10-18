@@ -41,6 +41,7 @@ internal static class Scanner
     {
         _selected = null;
         _beacon = false;
+        PathGuide.Reset();
     }
 
     public static void NextCategory(int step)
@@ -77,6 +78,7 @@ internal static class Scanner
     {
         if (!_beacon && _selected == null) { Speech.Say(Strings.NothingSelected); return; }
         _beacon = !_beacon;
+        PathGuide.Reset();
         Speech.Say(_beacon ? Strings.BeaconOn : Strings.BeaconOff);
     }
 
@@ -90,8 +92,8 @@ internal static class Scanner
             Speech.Say(string.Format(Strings.Gone, _selectedName));
             return;
         }
-        if (!Game.Frame(_selected.position, out var r, out var f, out _)) return;
-        var dist = Mathf.Sqrt(r * r + f * f);
+        if (!Game.Frame(_selected.position, out var tr, out var tf, out _)) return;
+        var dist = Mathf.Sqrt(tr * tr + tf * tf);
         if (dist < ArriveDistance)
         {
             _beacon = false;
@@ -101,7 +103,11 @@ internal static class Scanner
         }
         var now = Time.unscaledTime;
         if (now < _nextBeacon) return;
-        _nextBeacon = now + Spatial.PingInterval(dist, 30f);
+        // Follow the walkable route (round walls, through doorways), not the straight line.
+        var steer = PathGuide.Steer(Game.Player.transform.position, _selected.position);
+        if (!Game.Frame(steer, out var r, out var f, out _)) return;
+        var route = PathGuide.Remaining > 0 ? PathGuide.Remaining : dist;
+        _nextBeacon = now + Spatial.PingInterval(route, 30f);
         Cues.Play(Cues.Cue.Beacon, Spatial.Place(r, f, 40f));
     }
 
