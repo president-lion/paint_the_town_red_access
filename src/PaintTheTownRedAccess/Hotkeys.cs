@@ -34,6 +34,8 @@ internal static class Hotkeys
         if (Input.GetKeyDown(KeyCode.PageUp)) Page(-1, ctrl, inPlay);
         if (Input.GetKeyDown(KeyCode.PageDown)) Page(1, ctrl, inPlay);
 
+        if (!inPlay && Input.GetKeyDown(KeyCode.B) && !ctrl && !shift) BrawlersBlunder.Toggle();
+
         if (inPlay)
         {
             if (Input.GetKeyDown(KeyCode.H)) Game.SayHealth();

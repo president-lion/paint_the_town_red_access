@@ -86,6 +86,9 @@ internal static class Strings
     public const string RadarOff = "enemy sounds off";
     public const string SeekOff = "weapon guide off";
     public const string NoWeapons = "no loose weapons";
+    public const string BlunderOn = "the blind brawler's blunder on. start any arena challenge to play it";
+    public const string BlunderOff = "the blind brawler's blunder off";
+    public const string BlunderStart = "the blind brawler's blunder. {0} fights. weapons fall from the sky";
     public const string Traps1 = "1 trap on the floor";
     public const string TrapsN = "{0} traps on the floor";
 }
