@@ -5,7 +5,7 @@ namespace PaintTheTownRedAccess;
 
 /// <summary>
 /// Speaks screen text that is not attached to a menu item, when it appears or changes:
-/// the loading screen's level name, the win / lose / arena banner, the Beneath area
+/// the loading screen's level name, the win / lose / arena banner, the arena stats between fights, the Beneath area
 /// messages (area name, challenge, pursuer, shard, find the exit), the Beneath death screen
 /// and the Beneath save-management popup. Polled a few times a second; each text is spoken
 /// once per appearance (hiding it re-arms it).
@@ -15,10 +15,14 @@ internal static class ScreenWatch
     private static readonly Dictionary<string, string> _last = new();
     private static float _nextPoll, _nextFind;
     private static WinLoseUI _winLose;
+    private static ArenaStatsUI _arenaStats;
+    private static EndOfArenaWaveStats _waveStats;
 
     public static void OnSceneLoaded()
     {
         _winLose = null;
+        _arenaStats = null;
+        _waveStats = null;
         _nextFind = 0;
     }
 
@@ -28,10 +32,12 @@ internal static class ScreenWatch
         if (now < _nextPoll) return;
         _nextPoll = now + 0.2f;
 
-        if (_winLose == null && now >= _nextFind)
+        if ((_winLose == null || _arenaStats == null || _waveStats == null) && now >= _nextFind)
         {
             _nextFind = now + 2f;
-            _winLose = UnityEngine.Object.FindObjectOfType<WinLoseUI>();
+            _winLose ??= UnityEngine.Object.FindObjectOfType<WinLoseUI>();
+            _arenaStats ??= UnityEngine.Object.FindObjectOfType<ArenaStatsUI>();
+            _waveStats ??= UnityEngine.Object.FindObjectOfType<EndOfArenaWaveStats>();
         }
 
         var loading = LoadingScreen.Instance;
@@ -47,6 +53,14 @@ internal static class ScreenWatch
             Watch("win", _winLose.winText);
             if (Watch("lose", _winLose.loseText)) DangerProbe.LogDeath();
             Watch("arena", _winLose.arenaText);
+        }
+
+        // Arena: the stats shown between fights and at the end of a challenge.
+        if (_arenaStats != null) Watch("arenaStats", _arenaStats.statsLeftText);
+        if (_waveStats != null)
+        {
+            Watch("waveStatsLeft", _waveStats.leftSideText);
+            Watch("waveStats", _waveStats.statsLeftText);
         }
 
         var area = BeneathAreaUI.Instance;

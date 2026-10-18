@@ -44,6 +44,27 @@ internal static class WavSynth
 
     public static float[] Silence(float seconds) => new float[(int)(Rate * seconds)];
 
+    /// <summary>
+    /// A loopable buzz: a soft square wave with a tremolo. Whole cycles of both in the buffer,
+    /// so the loop point is seamless.
+    /// </summary>
+    public static float[] Buzz(float freq, float tremolo, float seconds)
+    {
+        var n = (int)(Rate * seconds);
+        var s = new float[n];
+        var cycles = MathF.Round(freq * seconds) / seconds;
+        var trem = MathF.Round(tremolo * seconds) / seconds;
+        for (var i = 0; i < n; i++)
+        {
+            var t = (float)i / Rate;
+            var v = MathF.Sin(2 * MathF.PI * cycles * t);
+            v = MathF.Tanh(3f * v) * 0.6f; // rounded square
+            var am = 0.55f + 0.45f * MathF.Sin(2 * MathF.PI * trem * t);
+            s[i] = v * am;
+        }
+        return s;
+    }
+
     /// <summary>Sine notes sounded together, with a short attack and an exponential decay.</summary>
     public static float[] Chord(float[] freqs, float seconds, float decay = 4f)
     {

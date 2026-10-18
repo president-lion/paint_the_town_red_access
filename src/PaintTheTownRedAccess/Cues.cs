@@ -3,18 +3,18 @@ namespace PaintTheTownRedAccess;
 /// <summary>
 /// The mod's sound cues. Each is a generated placeholder unless
 /// UserData\PaintTheTownRedAccess\sounds\&lt;name&gt;.wav exists, which replaces it
-/// (names: enemy, attack, reach, beacon, arrive, edge, danger, hit, break). Danger is a loop.
+/// (names: enemy, attack, reach, beacon, arrive, edge, danger, hit, break, trap). Danger and trap are loops.
 /// </summary>
 internal static class Cues
 {
-    public enum Cue { Enemy, Attack, Reach, Beacon, Arrive, Edge, Danger, Hit, Break }
+    public enum Cue { Enemy, Attack, Reach, Beacon, Arrive, Edge, Danger, Hit, Break, Trap }
 
     private static readonly Dictionary<Cue, IntPtr> _sounds = new();
     private static bool _loaded;
 
     public static string SoundDir => Path.Combine(Log.Dir, "sounds");
 
-    private static bool Loops(Cue cue) => cue == Cue.Danger;
+    private static bool Loops(Cue cue) => cue is Cue.Danger or Cue.Trap;
 
     private static float[] Make(Cue cue) => cue switch
     {
@@ -29,6 +29,8 @@ internal static class Cues
         Cue.Beacon => WavSynth.Tone(1320, 1320, 0.05f, WavSynth.Wave.Sine, 5f),
         Cue.Arrive => WavSynth.Concat(WavSynth.Tone(660, 660, 0.08f), WavSynth.Tone(990, 990, 0.12f)),
         Cue.Edge => WavSynth.Tone(180, 140, 0.05f, WavSynth.Wave.Noise, 8f),
+        // An arena trap nearby: a low pulsing buzz (TrapWarning).
+        Cue.Trap => WavSynth.Buzz(110f, 6f, 1f),
         // You landed a hit: 2100 Hz with a 300 ms release.
         Cue.Hit => WavSynth.Tone(2100, 2100, 0.3f, WavSynth.Wave.Sine, 5f),
         // Your weapon broke: a G diminished chord (G4, B flat 4, D flat 5).
