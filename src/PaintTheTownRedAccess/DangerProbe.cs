@@ -14,7 +14,8 @@ namespace PaintTheTownRedAccess;
 /// collected and logged. Several times a second the ground is probed in 12 directions out to
 /// 6 m: a ray down from chest height (12 m) that meets one of those colliders before solid
 /// ground is water; one that finds no solid ground within 4 m below your feet is a drop.
-/// A direction stops at the first wall, so the floor beyond an outer wall does not count.
+/// Beyond the first wall in a direction only water counts (v3 stopped there entirely and then
+/// never warned in Pirate Cove), so the missing floor behind an outer wall is not a drop.
 /// The nearest danger found is narrowed down by bisection so the volume changes smoothly.
 /// </summary>
 internal static class DangerProbe
@@ -30,7 +31,7 @@ internal static class DangerProbe
     private static readonly HashSet<IntPtr> _killColliders = new();
     private static bool _scanned;
     private static float _nextProbe;
-    private static int _logged;
+    private static int _logged, _diag;
     private static IntPtr _channel;
     private static string _lastWhat;
 
@@ -40,6 +41,7 @@ internal static class DangerProbe
         _killColliders.Clear();
         _scanned = false;
         _logged = 0;
+        _diag = 0;
         _lastWhat = null;
     }
 
@@ -104,13 +106,30 @@ internal static class DangerProbe
             var safe = 0f;
             foreach (var r in Rings)
             {
-                if (r >= best) break;          // cannot beat what was already found
-                if (r > wall - 0.2f) break;    // the floor beyond a wall does not count
+                if (r >= best) break; // cannot beat what was already found
                 var what = Probe(chest + dir * r, feet.y);
+                // Beyond a wall only deadly water counts: the missing floor behind an outer wall is
+                // not a drop you can walk off, but a railing or post does not make water safe.
+                if (r > wall - 0.2f && what == "drop") what = null;
                 if (what == null) { safe = r; continue; }
                 best = r; bestSafe = safe; bestDir = dir; bestWhat = what;
                 break;
             }
+        }
+
+        if (_diag < 3)
+        {
+            _diag++;
+            var sb = new System.Text.StringBuilder();
+            for (var s = 0; s < Directions; s++)
+            {
+                var a = s * 2f * Mathf.PI / Directions;
+                var dir = rgt * Mathf.Sin(a) + fwd * Mathf.Cos(a);
+                var wall = WallDistance(chest, dir);
+                sb.Append($" [{s}] wall {(wall > 99f ? "-" : wall.ToString("F1"))}");
+                foreach (var r in Rings) sb.Append(' ').Append(Probe(chest + dir * r, feet.y)?[0] ?? '.');
+            }
+            Log.Info("Danger", $"probe at {feet}:{sb}");
         }
 
         if (bestWhat == null)

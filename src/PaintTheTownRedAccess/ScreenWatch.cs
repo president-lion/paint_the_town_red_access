@@ -13,13 +13,16 @@ namespace PaintTheTownRedAccess;
 internal static class ScreenWatch
 {
     private static readonly Dictionary<string, string> _last = new();
-    private static float _nextPoll, _nextFind;
+    private static float _nextPoll, _nextFind, _quietUntil;
     private static WinLoseUI _winLose;
     private static ArenaStatsUI _arenaStats;
     private static EndOfArenaWaveStats _waveStats;
 
     public static void OnSceneLoaded()
     {
+        // A freshly loaded level still shows its UI's placeholder texts ("level complete",
+        // "you died", "time 24:31, kills 80/80") for a moment: note them without speaking.
+        _quietUntil = UnityEngine.Time.unscaledTime + 2f;
         _winLose = null;
         _arenaStats = null;
         _waveStats = null;
@@ -101,6 +104,11 @@ internal static class ScreenWatch
         if (text == (was ?? "")) return false;
         _last[key] = text;
         if (text.Length == 0) return false;
+        if (key != "loading" && UnityEngine.Time.unscaledTime < _quietUntil)
+        {
+            Log.Debug("Screen", $"{key} (quiet after load): {text}");
+            return false;
+        }
         Speech.Say(format == null ? text : string.Format(format, text), interrupt: false);
         Log.Debug("Screen", $"{key}: {text}");
         return true;
