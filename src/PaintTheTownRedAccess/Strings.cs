@@ -90,6 +90,8 @@ internal static class Strings
     public const string BlunderOff = "the blind brawler's blunder off";
     public const string BlunderStart = "the blind brawler's blunder. {0} fights. weapons fall from the sky";
     public const string CantReach = "can't reach {0}";
+    public const string SeekHigh = "up high";
+    public const string SeekJump = "it's above you, jump";
     public const string OpenWays = "open: {0}";
     public const string OpenAllRound = "open all round";
     public const string WallsAllRound = "walls close all round";
@@ -97,6 +99,20 @@ internal static class Strings
     public const string Narrow = "narrow";
     public const string Traps1 = "1 trap on the floor";
     public const string TrapsN = "{0} traps on the floor";
+
+    // What a workshop level's button is wired to (LevelButtons).
+    public const string LbWins = "wins the level";
+    public const string LbFight1 = "starts a fight with 1 enemy";
+    public const string LbFightN = "starts a fight with {0} enemies";
+    public const string LbMoves1 = "moves something";
+    public const string LbMovesN = "moves {0} things";
+    public const string LbTeleporter = "switches a teleporter";
+    public const string LbTraps = "switches traps";
+    public const string LbLights = "switches lights";
+    public const string LbMusic = "changes the music";
+    public const string LbTracker = "switches an enemy counter";
+    public const string LbOther = "switches {0} other things";
+    public const string LbNothing = "not wired to anything";
 
     // Workshop levels list (WorkshopMenu).
     public const string WsOpen = "workshop levels.";

@@ -92,7 +92,7 @@ public sealed class Mod : MelonMod
     public override void OnSceneWasLoaded(int buildIndex, string sceneName)
     {
         Log.Info("Scene", $"loaded {buildIndex} {sceneName}");
-        try { MenuReader.OnSceneLoaded(); ScreenWatch.OnSceneLoaded(); EnemyRadar.OnSceneLoaded(); Scanner.OnSceneLoaded(); DangerProbe.OnSceneLoaded(); TrapWarning.OnSceneLoaded(); WeaponSeek.OnSceneLoaded(); WallBump.OnSceneLoaded(); BrawlersBlunder.OnSceneLoaded(); ButtonMenu.OnSceneLoaded(); WorkshopMenu.OnSceneLoaded(); }
+        try { MenuReader.OnSceneLoaded(); ScreenWatch.OnSceneLoaded(); EnemyRadar.OnSceneLoaded(); Scanner.OnSceneLoaded(); DangerProbe.OnSceneLoaded(); TrapWarning.OnSceneLoaded(); WeaponSeek.OnSceneLoaded(); WallBump.OnSceneLoaded(); BrawlersBlunder.OnSceneLoaded(); ButtonMenu.OnSceneLoaded(); WorkshopMenu.OnSceneLoaded(); LevelButtons.OnSceneLoaded(); }
         catch (Exception ex) { Log.Once("SceneLoaded", ex); }
     }
 

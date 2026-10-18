@@ -204,6 +204,14 @@ internal static class Scanner
     /// its label, and on/off for buttons that stay pressed.</summary>
     public static string ButtonName(WorldButton b)
     {
+        // Workshop level buttons: the sign beside them and what they are wired to.
+        if (LevelButtons.Describe(b) is var (sign, effect))
+        {
+            var what = $"{sign ?? Strings.Button}, {effect}";
+            if (b.stayPressed || b.canUnpress) what += ", " + (b.pressed ? Strings.On : Strings.Off);
+            return what;
+        }
+
         var label = b.label;
         if (string.IsNullOrWhiteSpace(label)) label = b.interactUIText;
         if (b.attemptTranslation) label = UiText.Translate(label);

@@ -26,8 +26,32 @@ internal static class WeaponSeek
     private static readonly HashSet<IntPtr> _unreachable = new();
     private static float _closest, _progressAt;
     private const float GiveUpAfter = 8f;
+    // Standing under it waiting for you to jump: give that longer before giving up.
+    private const float GiveUpUnder = 15f;
+    // Pick-up works up to this far above or below (TryTake); jumping raises you, so weapons up
+    // to this plus the jump height are worth going for.
+    private const float TakeHeight = 2f;
+    private static float _jump = -1f;
+    private static bool _saidJump;
 
-    public static void OnSceneLoaded() { _target = null; _unreachable.Clear(); }
+    public static void OnSceneLoaded() { _target = null; _unreachable.Clear(); _jump = -1f; }
+
+    /// <summary>How high a jump lifts you: v^2 / 2g from the controller's jump speed and gravity.</summary>
+    private static float JumpHeight()
+    {
+        if (_jump >= 0f) return _jump;
+        _jump = 1f;
+        var c = UnityEngine.Object.FindObjectOfType<PTTRFirstPersonController>();
+        if (c != null)
+        {
+            var g = Mathf.Abs(Physics.gravity.y) * Mathf.Max(0.1f, c.m_GravityMultiplier);
+            if (g > 0.1f && c.m_JumpSpeed > 0f) _jump = Mathf.Clamp(c.m_JumpSpeed * c.m_JumpSpeed / (2f * g), 0f, 3f);
+            Log.Info("Seek", $"jump speed {c.m_JumpSpeed} gravity x{c.m_GravityMultiplier} -> jump height {_jump:0.00} m");
+        }
+        return _jump;
+    }
+
+    private static bool High(PTTRPlayer p) => _target.transform.position.y - p.transform.position.y > TakeHeight - 0.3f;
 
     public static void Toggle()
     {
@@ -40,7 +64,7 @@ internal static class WeaponSeek
         var d = Flat(_target.transform.position - p.transform.position).magnitude;
         if (TryTake(p)) return;
         Face(p);
-        Speech.Say($"{_name}, {Spatial.Distance(d)}");
+        Speech.Say($"{_name}, {Spatial.Distance(d)}" + (High(p) ? ", " + Strings.SeekHigh : ""));
     }
 
     public static void Stop()
@@ -70,8 +94,10 @@ internal static class WeaponSeek
         var now = Time.unscaledTime;
         // Give up on a weapon you cannot get any closer to, and go for the next one.
         var flatDist = Flat(_target.transform.position - p.transform.position).magnitude;
+        // Right under a weapon that is up high: say once to jump for it.
+        if (flatDist <= Reach && !_saidJump && High(p)) { _saidJump = true; Speech.Say(Strings.SeekJump); }
         if (flatDist < _closest - 0.5f) { _closest = flatDist; _progressAt = now; }
-        else if (now - _progressAt > GiveUpAfter)
+        else if (now - _progressAt > (flatDist <= Reach ? GiveUpUnder : GiveUpAfter))
         {
             Log.Info("Seek", $"no progress to '{_target.gameObject.name}' for {GiveUpAfter} s, skipping it");
             _unreachable.Add(_target.Pointer);
@@ -94,7 +120,7 @@ internal static class WeaponSeek
     private static bool TryTake(PTTRPlayer p)
     {
         var d = _target.transform.position - p.transform.position;
-        if (Mathf.Abs(d.y) > 2f || Flat(d).magnitude > Reach) return false;
+        if (Mathf.Abs(d.y) > TakeHeight || Flat(d).magnitude > Reach) return false;
         Log.Info("Seek", $"pick up '{_target.gameObject.name}'");
         p.PickUpWeapon(_target);
         Cues.Play2D(Cues.Cue.Arrive);
@@ -123,18 +149,20 @@ internal static class WeaponSeek
         if (p == null) return false;
         var from = p.transform.position;
         var best = MaxRange;
+        var above = TakeHeight + JumpHeight() - 0.2f;
         foreach (var w in UnityEngine.Object.FindObjectsOfType<Weapon>())
         {
             if (!Free(w) || (except != null && w.Pointer == except.Pointer)) continue;
             var d = w.transform.position - from;
-            // Out of arm's reach above or below (shelves, other floors), or given up on before.
-            if (Mathf.Abs(d.y) > 1.8f || _unreachable.Contains(w.Pointer)) continue;
+            // Out of reach even with a jump (high shelves, other floors), or given up on before.
+            if (d.y > above || d.y < -1.8f || _unreachable.Contains(w.Pointer)) continue;
             var dist = Flat(d).magnitude;
             if (dist < best) { best = dist; _target = w; }
         }
         if (_target == null) return false;
         _name = TextClean.ThingName(_target.gameObject.name);
         _closest = best;
+        _saidJump = false;
         _progressAt = Time.unscaledTime;
         Log.Info("Seek", $"target '{_target.gameObject.name}' {best:0.0} m");
         return true;
