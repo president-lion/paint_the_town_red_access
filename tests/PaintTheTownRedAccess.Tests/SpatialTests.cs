@@ -55,5 +55,14 @@ public class SpatialTests
         Assert.Equal("RIFF", System.Text.Encoding.ASCII.GetString(wav, 0, 4));
         Assert.Equal(44 + (int)(WavSynth.Rate * 0.1f) * 2, wav.Length);
     }
-}
 
+    [Fact]
+    public void CrackleIsLoopableAndInRange()
+    {
+        var c = WavSynth.Crackle(2f, 45f);
+        Assert.Equal(WavSynth.Rate * 2, c.Length);
+        Assert.All(c, v => Assert.InRange(v, -1f, 1f));
+        // Clicks stand out of the hiss.
+        Assert.True(c.Count(v => MathF.Abs(v) > 0.2f) > 45);
+    }
+}

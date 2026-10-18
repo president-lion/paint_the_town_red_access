@@ -3,16 +3,18 @@ namespace PaintTheTownRedAccess;
 /// <summary>
 /// The mod's sound cues. Each is a generated placeholder unless
 /// UserData\PaintTheTownRedAccess\sounds\&lt;name&gt;.wav exists, which replaces it
-/// (names: enemy, attack, reach, beacon, arrive, edge).
+/// (names: enemy, attack, reach, beacon, arrive, edge, danger). Danger is a loop.
 /// </summary>
 internal static class Cues
 {
-    public enum Cue { Enemy, Attack, Reach, Beacon, Arrive, Edge }
+    public enum Cue { Enemy, Attack, Reach, Beacon, Arrive, Edge, Danger }
 
     private static readonly Dictionary<Cue, IntPtr> _sounds = new();
     private static bool _loaded;
 
     public static string SoundDir => Path.Combine(Log.Dir, "sounds");
+
+    private static bool Loops(Cue cue) => cue == Cue.Danger;
 
     private static float[] Make(Cue cue) => cue switch
     {
@@ -27,6 +29,8 @@ internal static class Cues
         Cue.Beacon => WavSynth.Tone(1320, 1320, 0.05f, WavSynth.Wave.Sine, 5f),
         Cue.Arrive => WavSynth.Concat(WavSynth.Tone(660, 660, 0.08f), WavSynth.Tone(990, 990, 0.12f)),
         Cue.Edge => WavSynth.Tone(180, 140, 0.05f, WavSynth.Wave.Noise, 8f),
+        // Deadly water or a big drop nearby: a continuous crackle (DangerProbe).
+        Cue.Danger => WavSynth.Crackle(2f, 45f),
         _ => WavSynth.Tone(440, 440, 0.05f),
     };
 
@@ -40,7 +44,7 @@ internal static class Cues
             byte[] wav = null;
             var file = Path.Combine(SoundDir, c.ToString().ToLowerInvariant() + ".wav");
             try { if (File.Exists(file)) wav = File.ReadAllBytes(file); } catch { }
-            _sounds[c] = Fmod.Load(wav ?? WavSynth.ToWav(Make(c)), false);
+            _sounds[c] = Fmod.Load(wav ?? WavSynth.ToWav(Make(c)), Loops(c));
         }
         Log.Info("Cues", "loaded");
         return true;
@@ -53,4 +57,15 @@ internal static class Cues
     }
 
     public static void Play2D(Cue cue, float volume = 1f) => Play(cue, new Placement(0f, volume, 1f));
+
+    /// <summary>
+    /// Keeps a looping cue playing with this placement, starting it if needed, and returns its
+    /// channel. Pass the returned channel back in on the next call.
+    /// </summary>
+    public static IntPtr Loop(Cue cue, IntPtr channel, Placement p)
+    {
+        if (!Load()) return IntPtr.Zero;
+        if (Fmod.IsPlaying(channel)) { Fmod.Apply(channel, p, Settings.CueVolume); return channel; }
+        return Fmod.Play(_sounds[cue], p, Settings.CueVolume);
+    }
 }

@@ -44,6 +44,33 @@ internal static class WavSynth
 
     public static float[] Silence(float seconds) => new float[(int)(Rate * seconds)];
 
+    /// <summary>
+    /// A loopable crackle like a fire or a Geiger counter: random short noise clicks of random
+    /// loudness over a faint hiss. Played looped; FMOD pitch speeds it up.
+    /// </summary>
+    public static float[] Crackle(float seconds, float clicksPerSecond, int seed = 77)
+    {
+        var n = (int)(Rate * seconds);
+        var s = new float[n];
+        var rnd = new Random(seed);
+        for (var i = 0; i < n; i++) s[i] = (float)(rnd.NextDouble() * 2 - 1) * 0.04f;
+        var clicks = (int)(seconds * clicksPerSecond);
+        for (var c = 0; c < clicks; c++)
+        {
+            var start = rnd.Next(n);
+            var len = (int)(Rate * (0.001f + 0.004f * (float)rnd.NextDouble()));
+            var amp = 0.3f + 0.7f * (float)rnd.NextDouble();
+            for (var k = 0; k < len; k++)
+            {
+                // Wrap around so the loop point has no gap or seam.
+                var i = (start + k) % n;
+                s[i] += (float)(rnd.NextDouble() * 2 - 1) * amp * MathF.Exp(-5f * k / len);
+            }
+        }
+        for (var i = 0; i < n; i++) s[i] = Math.Clamp(s[i], -1f, 1f);
+        return s;
+    }
+
     public static byte[] ToWav(float[] samples, float gain = 0.8f)
     {
         var data = samples.Length * 2;
