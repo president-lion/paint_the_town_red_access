@@ -78,7 +78,7 @@ internal static class Fmod
     {
         if (ch == IntPtr.Zero) return;
         FMOD_Channel_SetPan(ch, p.Pan);
-        FMOD_Channel_SetVolume(ch, Math.Clamp(p.Volume * gain, 0f, 1f));
+        FMOD_Channel_SetVolume(ch, Math.Clamp(p.Volume * gain, 0f, 4f)); // above 1 amplifies
         FMOD_Channel_SetPitch(ch, p.Pitch);
     }
 

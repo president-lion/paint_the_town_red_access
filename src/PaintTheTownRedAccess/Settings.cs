@@ -20,7 +20,8 @@ internal static class Settings
     public static float RadarRange => Math.Clamp(_radarRange?.Value ?? 20f, 3f, 100f);
     public static bool ArrowTurning => _arrowTurning?.Value ?? true;
     public static float TurnSpeed => Math.Clamp(_turnSpeed?.Value ?? 1f, 0.1f, 5f);
-    public static float CueVolume => Math.Clamp(_cueVolume?.Value ?? 0.8f, 0f, 1f);
+    // Above 1 amplifies (FMOD channel volume). Replaces the old 0-1 CueVolume entry.
+    public static float CueVolume => Math.Clamp(_cueVolume?.Value ?? 2f, 0f, 4f);
     public static bool PickupAssist => _pickupAssist?.Value ?? true;
     public static float Reach => Math.Clamp(_reach?.Value ?? 1.8f, 0.5f, 6f);
     public static bool HitBeep => _hitBeep?.Value ?? true;
@@ -50,7 +51,7 @@ internal static class Settings
             "Left and right arrows turn instead of strafing (A and D still strafe)");
         _turnSpeed = cat.CreateEntry("TurnSpeed", 1f, "Turn speed",
             "Multiplies the game's gamepad turn speed for the arrow keys");
-        _cueVolume = cat.CreateEntry("CueVolume", 0.8f, "Mod sound volume", "0 to 1");
+        _cueVolume = cat.CreateEntry("CueLoudness", 2f, "Mod sound loudness", "1 = as recorded, up to 4 to amplify, 0 = silent");
         _danger = cat.CreateEntry("DangerWarning", true, "Water and drop warning",
             "A crackle from the direction of deadly water or a big drop near you");
         _keyRemap = cat.CreateEntry("KeyRemap", true, "Keyboard attack and block",
