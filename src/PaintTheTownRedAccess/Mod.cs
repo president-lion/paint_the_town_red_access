@@ -36,6 +36,9 @@ public sealed class Mod : MelonMod
         try { ButtonMenu.Tick(); }
         catch (Exception ex) { Log.Once("ButtonMenu", ex); }
 
+        try { WorkshopMenu.Tick(); }
+        catch (Exception ex) { Log.Once("WorkshopMenu", ex); }
+
         try { Hotkeys.Tick(); }
         catch (Exception ex) { Log.Once("Hotkeys", ex); }
 
@@ -89,7 +92,7 @@ public sealed class Mod : MelonMod
     public override void OnSceneWasLoaded(int buildIndex, string sceneName)
     {
         Log.Info("Scene", $"loaded {buildIndex} {sceneName}");
-        try { MenuReader.OnSceneLoaded(); ScreenWatch.OnSceneLoaded(); EnemyRadar.OnSceneLoaded(); Scanner.OnSceneLoaded(); DangerProbe.OnSceneLoaded(); TrapWarning.OnSceneLoaded(); WeaponSeek.OnSceneLoaded(); WallBump.OnSceneLoaded(); BrawlersBlunder.OnSceneLoaded(); ButtonMenu.OnSceneLoaded(); }
+        try { MenuReader.OnSceneLoaded(); ScreenWatch.OnSceneLoaded(); EnemyRadar.OnSceneLoaded(); Scanner.OnSceneLoaded(); DangerProbe.OnSceneLoaded(); TrapWarning.OnSceneLoaded(); WeaponSeek.OnSceneLoaded(); WallBump.OnSceneLoaded(); BrawlersBlunder.OnSceneLoaded(); ButtonMenu.OnSceneLoaded(); WorkshopMenu.OnSceneLoaded(); }
         catch (Exception ex) { Log.Once("SceneLoaded", ex); }
     }
 

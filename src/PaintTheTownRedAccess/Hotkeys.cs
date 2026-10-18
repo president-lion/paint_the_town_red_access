@@ -14,6 +14,7 @@ namespace PaintTheTownRedAccess;
 ///   End                       beacon on/off
 ///   Shift+End                 enemy sounds on/off
 ///   M                         buttons menu (ButtonMenu)
+///   L                         player created levels screen: reopen the level list (WorkshopMenu)
 ///   Z                         face the nearest enemy (FaceEnemy)
 ///   G / T / X                 attack / block / drop (KeyRemap patches the game's input)
 ///   F10  write screen.txt (what is on screen now)
@@ -28,7 +29,7 @@ internal static class Hotkeys
 
         var ctrl = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
         var shift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-        if (ButtonMenu.Open) return; // the menu reads its own keys
+        if (ButtonMenu.Open || WorkshopMenu.Open) return; // the menus read their own keys
         var inPlay = Game.InPlay;
 
         if (Input.GetKeyDown(KeyCode.PageUp)) Page(-1, ctrl, inPlay);

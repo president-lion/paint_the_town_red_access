@@ -206,14 +206,14 @@ internal static class ButtonMenu
     // ---- game input is blocked while the menu is open --------------------------------------
 
     [HarmonyPatch(typeof(InputSystem), nameof(InputSystem.GetButtonDown))]
-    private static class BlockDown { private static bool Prefix(ref bool __result) { if (!BlockingInput) return true; __result = false; return false; } }
+    private static class BlockDown { private static bool Prefix(ref bool __result) { if (!BlockingInput && !WorkshopMenu.BlockingInput) return true; __result = false; return false; } }
 
     [HarmonyPatch(typeof(InputSystem), nameof(InputSystem.GetButton))]
-    private static class BlockHeld { private static bool Prefix(ref bool __result) { if (!BlockingInput) return true; __result = false; return false; } }
+    private static class BlockHeld { private static bool Prefix(ref bool __result) { if (!BlockingInput && !WorkshopMenu.BlockingInput) return true; __result = false; return false; } }
 
     [HarmonyPatch(typeof(InputSystem), nameof(InputSystem.GetButtonUp))]
-    private static class BlockUp { private static bool Prefix(ref bool __result) { if (!BlockingInput) return true; __result = false; return false; } }
+    private static class BlockUp { private static bool Prefix(ref bool __result) { if (!BlockingInput && !WorkshopMenu.BlockingInput) return true; __result = false; return false; } }
 
     [HarmonyPatch(typeof(InputSystem), nameof(InputSystem.GetAxis))]
-    private static class BlockAxis { private static bool Prefix(ref float __result) { if (!BlockingInput) return true; __result = 0f; return false; } }
+    private static class BlockAxis { private static bool Prefix(ref float __result) { if (!BlockingInput && !WorkshopMenu.BlockingInput) return true; __result = 0f; return false; } }
 }

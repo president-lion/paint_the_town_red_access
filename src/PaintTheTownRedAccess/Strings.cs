@@ -97,4 +97,42 @@ internal static class Strings
     public const string Narrow = "narrow";
     public const string Traps1 = "1 trap on the floor";
     public const string TrapsN = "{0} traps on the floor";
+
+    // Workshop levels list (WorkshopMenu).
+    public const string WsOpen = "workshop levels.";
+    public const string WsHint = "left and right for tabs, enter to play or subscribe, I for details, F favourite, U or D to vote, delete to unsubscribe, escape to close.";
+    public const string WsClosed = "level list closed. L to reopen";
+    public const string WsSubscribed = "subscribed";
+    public const string WsFavourites = "favourites";
+    public const string WsPopular = "popular this month";
+    public const string WsTopRated = "top rated";
+    public const string WsNewest = "newest";
+    public const string WsSearch = "search the workshop";
+    public const string WsOneLevel = "1 level";
+    public const string WsLevels = "{0} levels";
+    public const string WsEmpty = "no levels here";
+    public const string WsLoading = "loading from steam";
+    public const string WsOffline = "steam did not answer. try again in a moment";
+    public const string WsMore = "more results";
+    public const string WsMoreLoaded = "{0} more.";
+    public const string WsUntitled = "untitled level";
+    public const string WsIsSubscribed = "subscribed";
+    public const string WsIsFavourite = "favourite";
+    public const string WsNotPlayed = "not played";
+    public const string WsSearchBox = "search box, {0}. type words, then enter";
+    public const string WsBlank = "blank";
+    public const string WsSpace = "space";
+    public const string WsTypeFirst = "type something to search for first";
+    public const string WsDownloading = "{0} is still downloading, {1} percent";
+    public const string WsSubscribing = "subscribed to {0}. it downloads now and shows up in the subscribed tab. press enter on it again to play";
+    public const string WsFavAdded = "{0} added to favourites";
+    public const string WsFavRemoved = "{0} removed from favourites";
+    public const string WsVotedUp = "voted {0} up";
+    public const string WsVotedDown = "voted {0} down";
+    public const string WsNotSubscribed = "not subscribed";
+    public const string WsConfirmUnsub = "press delete again to unsubscribe from {0}";
+    public const string WsUnsubscribed = "unsubscribed from {0}";
+    public const string WsVotes = "{0} up votes, {1} down";
+    public const string WsMade = "made {0}";
+    public const string WsSize = "{0} megabytes";
 }
