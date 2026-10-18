@@ -78,11 +78,14 @@ internal static class SteamFlat
         var utils = SteamAPI_SteamUtils_v010();
         if (!SteamAPI_ISteamUtils_IsAPICallCompleted(utils, q.Call, out var failed)) return false;
         q.Done = true;
-        q.Failed = failed;
         var ugc = SteamAPI_SteamUGC_v015();
-        if (!failed) ReadResults(ugc, q);
+        // The game's own Steamworks.NET dispatcher takes every finished call off the queue and
+        // drops results nobody registered for, so this call often reads as failed. The results
+        // stay on the query handle until it is released, so read them anyway.
+        ReadResults(ugc, q);
+        q.Failed = q.Items.Count == 0 && failed;
         SteamAPI_ISteamUGC_ReleaseQueryUGCRequest(ugc, q.Handle);
-        Log.Info("Workshop", $"query {q.Handle} done failed={failed} items={q.Items.Count}");
+        Log.Info("Workshop", $"query {q.Handle} done callFailed={failed} items={q.Items.Count}");
         return true;
     }
 
